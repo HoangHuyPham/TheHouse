@@ -1,5 +1,13 @@
+import engine.Mesh;
+import engine.Renderer;
+import engine.Vertex;
+import org.joml.Vector3f;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL20;
+
 public class Program implements Runnable {
     Window window;
+    Renderer renderer;
     long time;
     int frameCount;
 
@@ -22,6 +30,7 @@ public class Program implements Runnable {
         time = System.currentTimeMillis();
         window = new Window(1024, 768, "The House"); // 4:3 ratio
         window.create();
+        renderer = new Renderer();
     }
 
     void start() {
@@ -30,7 +39,7 @@ public class Program implements Runnable {
     }
 
     void render() {
-        window.render();
+        window.swapBuffer();
         calcFPS();
     }
 
