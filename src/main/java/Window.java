@@ -8,6 +8,7 @@ public class Window {
     String title;
     long windowId;
 
+
     public Window(int width, int height, String title) {
         this.width = width;
         this.height = height;
@@ -27,6 +28,7 @@ public class Window {
             System.exit(1);
         }
 
+        glfwMakeContextCurrent(windowId);
         glfwSwapInterval(1);
     }
     void render(){
@@ -45,5 +47,9 @@ public class Window {
 
     boolean shouldClose(){
         return glfwWindowShouldClose(windowId);
+    }
+
+    void showFPS(int fpsCount) {
+        glfwSetWindowTitle(windowId, title.concat(" | "+"FPS: "+fpsCount));
     }
 }
