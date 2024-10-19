@@ -98,6 +98,7 @@ public class Program implements Runnable {
 
 
         renderer.renderMesh(box);
+
         camera.render();
         window.swapBuffer();
         calcFPS();

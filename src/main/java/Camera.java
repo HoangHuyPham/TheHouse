@@ -6,10 +6,15 @@ import org.lwjgl.opengl.GL20;
 import java.nio.FloatBuffer;
 
 public class Camera {
-    static Matrix4f projection = new Matrix4f().perspective(45, (float) Math.toRadians(45), 0.1f, 100.0f).lookAt(0,0,0, 0, 0, -100f, 0, 1, 0);
+    static Matrix4f projection = new Matrix4f().perspective(Math.toRadians(45), (float) Window.width / Window.height, 0.1f, 100.0f).lookAt(0,0,0, 0, 0, -100f, 0, 1, 0);
     static FloatBuffer floatBuffer = BufferUtils.createFloatBuffer(16);
 
     public Camera() {
+        projection.get(floatBuffer);
+    }
+
+    public static void updateProjection() {
+        projection = new Matrix4f().perspective(Math.toRadians(45), (float) Window.width / Window.height, 0.1f, 100.0f).lookAt(0,0,0, 0, 0, -100f, 0, 1, 0);
         projection.get(floatBuffer);
     }
 
