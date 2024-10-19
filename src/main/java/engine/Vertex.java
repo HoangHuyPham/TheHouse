@@ -8,4 +8,9 @@ public class Vertex {
     public Vertex(Vector3f position) {
         this.position = position;
     }
+
+    @Override
+    public String toString() {
+        return "Vertex [position=" + position + "]";
+    }
 }

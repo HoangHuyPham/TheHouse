@@ -1,6 +1,5 @@
 package engine;
 
-import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
@@ -11,13 +10,17 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
 public class Mesh{
-    private Vertex[] vertices;
-    private int[] indices;
+    final private Vertex[] vertices;
+    final private int[] indices;
     private int vao, pbo, ibo;
 
     public Mesh(Vertex[] vertices, int[] indices) {
         this.vertices = vertices;
         this.indices = indices;
+    }
+
+    public static Mesh parseMesh(Obj obj){
+        return new Mesh(obj.getVertices(), obj.getIndices());
     }
 
     public void create(){
