@@ -2,6 +2,7 @@ import engine.Mesh;
 import engine.Renderer;
 import engine.Shader;
 import engine.Vertex;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWKeyCallback;
@@ -17,13 +18,13 @@ public class Program implements Runnable {
     long time;
     int frameCount;
     public Mesh mesh = new Mesh(new Vertex[] {
-            new Vertex.VertexBuilder().position(new Vector3f(-0.5f,  0.5f, -1f)).build(),
-            new Vertex.VertexBuilder().position(new Vector3f(-0.5f, -0.5f, -1f)).build(),
-            new Vertex.VertexBuilder().position(new Vector3f(0.5f, -0.5f, -1f)).build(),
-            new Vertex.VertexBuilder().position(new Vector3f(0.5f,  0.5f, -1f)).build(),
+            new Vertex.VertexBuilder().position(new Vector3f(0.5f,  0.5f, 0.0f)).texture(new Vector2f(1.0f, 1.0f)).build(),
+            new Vertex.VertexBuilder().position(new Vector3f( 0.5f, -0.5f, 0.0f)).texture(new Vector2f(1.0f, 0.0f)).build(),
+            new Vertex.VertexBuilder().position(new Vector3f(-0.5f, -0.5f, 0.0f)).texture(new Vector2f(0.0f, 0.0f)).build(),
+            new Vertex.VertexBuilder().position(new Vector3f(-0.5f,  0.5f, 0.0f)).texture(new Vector2f(0.0f, 1.0f)).build(),
     }, new int[] {
-            0, 1, 2,
-            0, 3, 2
+            0, 1, 3,
+            1, 2, 3
     });
 
     public Mesh box = Mesh.parseMesh(File.getObj("obj/box.obj", true));
@@ -49,8 +50,8 @@ public class Program implements Runnable {
         window.create();
         shader = new Shader("shader/vertex.glsl", "shader/fragment.glsl");
         shader.create();
-        renderer = new Renderer(shader);
-        mesh.create();
+        renderer = new Renderer.RendererBuilder().texture(1).shader(shader).build();
+        mesh.addTexture("texture/wall.png").create();
         box.create();
 
         camera = new Camera();
@@ -92,7 +93,7 @@ public class Program implements Runnable {
         }
 
 
-        renderer.renderMesh(mesh);
+        renderer.renderMesh(mesh, mesh.getTextureId());
 
 //        if (Camera.isUpdating){
 //            Camera.isUpdating = false;
