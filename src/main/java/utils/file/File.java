@@ -41,7 +41,7 @@ public class File {
             String[] parts = line.split(" ");
             switch (parts[0]){
                 case "v"->{
-                    vertices.add(new Vertex(new Vector3f(Float.parseFloat(parts[1]), Float.parseFloat(parts[2]), Float.parseFloat(parts[3]))));
+                    vertices.add(new Vertex.VertexBuilder().position(new Vector3f(Float.parseFloat(parts[1]), Float.parseFloat(parts[2]), Float.parseFloat(parts[3]))).build());
                 }
                 case "f"->{
                     for (int i=1; i<parts.length; i++){

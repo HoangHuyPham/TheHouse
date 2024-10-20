@@ -1,7 +1,9 @@
 package engine;
 
+import lombok.Getter;
 import org.lwjgl.opengl.*;
 
+@Getter
 public class Mesh{
     final private Vertex[] vertices;
     final private int[] indices;
@@ -31,13 +33,15 @@ public class Mesh{
             data[i*6+5] = vertices[i].color.z;
         }
 
-        vbo = GL15.glGenBuffers();
+        vbo = GL30.glGenBuffers();
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbo);
         GL15.glBufferData(GL15.GL_ARRAY_BUFFER, data, GL15.GL_STATIC_DRAW);
         GL30.glVertexAttribPointer(0, 3, GL30.GL_FLOAT, false, Float.BYTES * 6, 0);
         GL30.glVertexAttribPointer(1, 3, GL30.GL_FLOAT, false, Float.BYTES * 6, Float.BYTES * 3);
+        GL30.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 
-        ibo = GL15.glGenBuffers();
+
+        ibo = GL30.glGenBuffers();
         GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, ibo);
         GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, indices, GL15.GL_STATIC_DRAW);
         GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -45,21 +49,6 @@ public class Mesh{
         GL30.glBindVertexArray(0);
     }
 
-    public int getVao() {
-        return vao;
-    }
-
-    public int getIbo() {
-        return ibo;
-    }
-
-    public int[] getIndices() {
-        return indices;
-    }
-
-    public Vertex[] getVertices() {
-        return vertices;
-    }
 
     public void destroy(){
         GL30.glDeleteVertexArrays(vao);

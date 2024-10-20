@@ -1,22 +1,14 @@
 package engine;
 
+import lombok.*;
 import org.joml.Vector3f;
 
+@Builder(access = AccessLevel.PUBLIC)
 public class Vertex {
-    Vector3f position;
-    Vector3f color;
+    @NonNull public final Vector3f position;
+    @Builder.Default public final Vector3f color = new Vector3f(1f, 1f, 1f); // white default color
 
-    public Vertex(Vector3f position) {
-        this.position = position;
-    }
-
-    public Vertex(Vector3f position, Vector3f color) {
-        this.position = position;
-        this.color = color;
-    }
-
-    @Override
-    public String toString() {
-        return "Vertex [position=" + position + ", color=" + color + "]";
+    public static class VertexBuilder {
+        public VertexBuilder() {} // Public constructor
     }
 }

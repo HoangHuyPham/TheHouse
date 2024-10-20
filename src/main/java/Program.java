@@ -7,6 +7,7 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.opengl.GL20;
 import utils.file.File;
+import lombok.*;
 
 public class Program implements Runnable {
     Window window;
@@ -16,10 +17,10 @@ public class Program implements Runnable {
     long time;
     int frameCount;
     public Mesh mesh = new Mesh(new Vertex[] {
-            new Vertex(new Vector3f(-0.5f,  0.5f, -1f), new Vector3f(1f, 0f, 0f)),
-            new Vertex(new Vector3f(-0.5f, -0.5f, -1f), new Vector3f(1f, 1f, 0f)),
-            new Vertex(new Vector3f( 0.5f, -0.5f, -1f), new Vector3f(1f, 1f, 0f)),
-            new Vertex(new Vector3f( 0.5f,  0.5f, -1f), new Vector3f(1f, 1f, 0f)),
+            new Vertex.VertexBuilder().position(new Vector3f(-0.5f,  0.5f, -1f)).build(),
+            new Vertex.VertexBuilder().position(new Vector3f(-0.5f, -0.5f, -1f)).build(),
+            new Vertex.VertexBuilder().position(new Vector3f(0.5f, -0.5f, -1f)).build(),
+            new Vertex.VertexBuilder().position(new Vector3f(0.5f,  0.5f, -1f)).build(),
     }, new int[] {
             0, 1, 2,
             0, 3, 2
@@ -50,7 +51,7 @@ public class Program implements Runnable {
         shader.create();
         renderer = new Renderer(shader);
         mesh.create();
-//        box.create();
+        box.create();
 
         camera = new Camera();
         Camera.isUpdating = true; // init projectile matrix in first
