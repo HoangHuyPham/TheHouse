@@ -8,12 +8,14 @@ import java.nio.FloatBuffer;
 public class Camera {
     static Matrix4f projection = new Matrix4f().perspective(Math.toRadians(45), (float) Window.width / Window.height, 0.1f, 100.0f).lookAt(0,0,0, 0, 0, -100f, 0, 1, 0);
     static FloatBuffer floatBuffer = BufferUtils.createFloatBuffer(16);
+    static boolean isUpdating;
 
     public Camera() {
         projection.get(floatBuffer);
     }
 
     public static void updateProjection() {
+        isUpdating = true;
         projection = new Matrix4f().perspective(Math.toRadians(45), (float) Window.width / Window.height, 0.1f, 100.0f).lookAt(0,0,0, 0, 0, -100f, 0, 1, 0);
         projection.get(floatBuffer);
     }

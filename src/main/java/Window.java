@@ -1,5 +1,6 @@
 import org.joml.Math;
 import org.lwjgl.glfw.Callbacks;
+import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.glfw.GLFWWindowSizeCallback;
 import org.lwjgl.opengl.GL;
@@ -37,7 +38,8 @@ public class Window {
 
         glfwMakeContextCurrent(windowId);
         glfwSwapInterval(1);
-        GL.createCapabilities();
+
+        GLFWErrorCallback.createPrint(System.err).set();
 
         GLFWKeyCallback.create((window, key, scancode, action, mods) -> {
             if (key == GLFW_KEY_ESCAPE){
@@ -50,6 +52,8 @@ public class Window {
             width = w;
             height = h;
         }).set(windowId);
+
+        GL.createCapabilities();
     }
     void swapBuffer(){
         glfwSwapBuffers(windowId);
@@ -63,7 +67,7 @@ public class Window {
             isWindowSizeChange = false;
         }
         GL20.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-        GL20.glClearColor(1f, 0f, 0f, 0f);
+        GL20.glClearColor(0f, 0f, 0f, 0f);
         GL20.glLoadIdentity();
         glfwPollEvents();
     }

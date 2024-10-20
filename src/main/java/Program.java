@@ -1,13 +1,10 @@
 import engine.Mesh;
 import engine.Renderer;
+import engine.Shader;
 import engine.Vertex;
-import org.joml.Math;
-import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWKeyCallback;
-import org.lwjgl.opengl.GL;
-import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import utils.file.File;
 
@@ -15,19 +12,20 @@ public class Program implements Runnable {
     Window window;
     Renderer renderer;
     Camera camera;
+    Shader shader;
     long time;
     int frameCount;
     public Mesh mesh = new Mesh(new Vertex[] {
-            new Vertex(new Vector3f(-0.5f,  0.5f, -1f)),
-            new Vertex(new Vector3f(-0.5f, -0.5f, -1f)),
-            new Vertex(new Vector3f( 0.5f, -0.5f, -1f)),
-            new Vertex(new Vector3f( 0.5f,  0.5f, -1f))
+            new Vertex(new Vector3f(-0.5f,  0.5f, -1f), new Vector3f(1f, 0f, 0f)),
+            new Vertex(new Vector3f(-0.5f, -0.5f, -1f), new Vector3f(1f, 1f, 0f)),
+            new Vertex(new Vector3f( 0.5f, -0.5f, -1f), new Vector3f(1f, 1f, 0f)),
+            new Vertex(new Vector3f( 0.5f,  0.5f, -1f), new Vector3f(1f, 1f, 0f)),
     }, new int[] {
             0, 1, 2,
             0, 3, 2
     });
 
-    public Mesh box = Mesh.parseMesh(File.getObj("objs/box.obj"));
+    public Mesh box = Mesh.parseMesh(File.getObj("obj/box.obj", true));
 
 
     @Override
@@ -46,28 +44,20 @@ public class Program implements Runnable {
     }
 
     void init() {
-
-        time = System.currentTimeMillis();
         window = new Window(1024, 768, "The House"); // 4:3 ratio
         window.create();
-        renderer = new Renderer();
-        box.create();
+        shader = new Shader("shader/vertex.glsl", "shader/fragment.glsl");
+        shader.create();
+        renderer = new Renderer(shader);
+        mesh.create();
+//        box.create();
 
         camera = new Camera();
-
-        for (int i = 0; i < box.getIndices().length; i++) {
-            System.out.println(box.getIndices()[i]);
-        }
+        Camera.isUpdating = true; // init projectile matrix in first
 
 
-        GL20.glEnable(GL20.GL_DEPTH_TEST | GL20.GL_SMOOTH);
+        GL20.glEnable(GL20.GL_DEPTH_TEST);
         GL20.glViewport(0, 0, window.width, window.height);
-
-
-        GL20.glMatrixMode(GL11.GL_PROJECTION);
-        GL20.glLoadIdentity();
-        GL20.glLoadMatrixf(Camera.floatBuffer);
-        GL20.glMatrixMode(GL11.GL_MODELVIEW);
 
         GLFWKeyCallback.create((window, key, scancode, action, mods) -> {
             if (key == GLFW.GLFW_KEY_RIGHT){
@@ -79,16 +69,20 @@ public class Program implements Runnable {
                 angle+=15;
             }
         }).set(window.windowId);
+
+        time = System.currentTimeMillis();
     }
+
     float angle = 0;
     boolean up;
+
     void start() {
         System.out.println("Program started");
         new Thread(this, "program").start();
     }
 
     void render() {
-        GL20.glTranslated(0,0,-10f);
+//        GL20.glTranslated(0,0,-5f);
 
         if (up){
             GL20.glRotated(angle, 1, 0, 0);
@@ -97,9 +91,13 @@ public class Program implements Runnable {
         }
 
 
-        renderer.renderMesh(box);
+        renderer.renderMesh(mesh);
 
-        camera.render();
+//        if (Camera.isUpdating){
+//            Camera.isUpdating = false;
+//            camera.render();
+//        }
+
         window.swapBuffer();
         calcFPS();
     }
@@ -109,6 +107,8 @@ public class Program implements Runnable {
     }
 
     void destroy() {
+        shader.destroy();
+        mesh.destroy();
         window.destroy();
     }
 
