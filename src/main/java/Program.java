@@ -8,13 +8,12 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.opengl.GL20;
 import utils.file.File;
-import lombok.*;
 
 public class Program implements Runnable {
-    Window window;
+    Window window = new Window(1024, 768, "The House");
     Renderer renderer;
     Camera camera;
-    Shader shader;
+    Shader shader = new Shader("shader/vertex.glsl", "shader/fragment.glsl");
     long time;
     int frameCount;
     public Mesh mesh = new Mesh(new Vertex[] {
@@ -46,14 +45,11 @@ public class Program implements Runnable {
     }
 
     void init() {
-        window = new Window(1024, 768, "The House"); // 4:3 ratio
-        window.create();
-        shader = new Shader("shader/vertex.glsl", "shader/fragment.glsl");
+        window.create(); // 4:3 ratio
         shader.create();
-        renderer = new Renderer.RendererBuilder().texture(1).shader(shader).build();
-        mesh.addTexture("texture/wall.png").create();
+        mesh.create();
         box.create();
-
+        renderer = new Renderer.RendererBuilder().shader(shader).build();
         camera = new Camera();
         Camera.isUpdating = true; // init projectile matrix in first
 
@@ -93,7 +89,7 @@ public class Program implements Runnable {
         }
 
 
-        renderer.renderMesh(mesh, mesh.getTextureId());
+        renderer.renderMesh(mesh);
 
 //        if (Camera.isUpdating){
 //            Camera.isUpdating = false;

@@ -38,7 +38,7 @@ public class Shader {
         GL20.glCompileShader(fragmentShader);
 
         if (GL20.glGetShaderi(fragmentShader, GL20.GL_COMPILE_STATUS) == 0) {
-            System.err.println("Could not compile vertex shader: " + vertexShader);
+            System.err.println("Could not compile fragment shader: " + vertexShader);
         }
     }
 

@@ -15,6 +15,16 @@ public class Mesh{
         this.indices = indices;
     }
 
+    public Mesh(Vertex[] vertices, int[] indices, int textureId) {
+        this(vertices, indices);
+        this.textureId = textureId;
+    }
+
+    public Mesh(Vertex[] vertices, int[] indices, String texture) {
+        this(vertices, indices);
+        this.textureId = TextureLoader.loadTexture(texture);
+    }
+
     public static Mesh parseMesh(Obj obj){
         return new Mesh(obj.getVertices(), obj.getIndices());
     }
