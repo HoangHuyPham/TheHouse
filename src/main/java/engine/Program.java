@@ -1,18 +1,17 @@
-import engine.Mesh;
-import engine.Renderer;
-import engine.Shader;
-import engine.Vertex;
+package engine;
+
+import lombok.Getter;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.opengl.GL20;
 import utils.file.File;
 
+@Getter
 public class Program implements Runnable {
-    Window window = new Window(1024, 768, "The House");
+    Window window = new Window.WindowBuilder().width(1024).height(768).title("The House").build();
+    ECamera camera = new ECamera.ECameraBuilder().position(new Vector3f(0,0,5f)).build();
+    CallbackManager callbackManager = new CallbackManager(window, camera);
     Renderer renderer;
-    Camera camera;
     Shader shader = new Shader("shader/vertex.glsl", "shader/fragment.glsl");
     long time;
     int frameCount;
@@ -25,6 +24,7 @@ public class Program implements Runnable {
             0, 1, 3,
             1, 2, 3
     });
+    public EObject eObject1 = new EObject.EObjectBuilder().position(new Vector3f(0f,0f,0f)).rotation(new Vector3f(0, 15, 45)).mesh(mesh).build();
 
     public Mesh box = Mesh.parseMesh(File.getObj("obj/box.obj", true));
 
@@ -46,56 +46,28 @@ public class Program implements Runnable {
 
     void init() {
         window.create(); // 4:3 ratio
+        callbackManager.create();
         shader.create();
-        mesh.create();
+        mesh.addTexture("texture/wall.png").create();
         box.create();
         renderer = new Renderer.RendererBuilder().shader(shader).build();
-        camera = new Camera();
-        Camera.isUpdating = true; // init projectile matrix in first
 
+        camera.updateViewMatrix();
+        camera.updateProjectionMatrix((float) window.getWidth()/ window.getHeight());
 
         GL20.glEnable(GL20.GL_DEPTH_TEST);
-        GL20.glViewport(0, 0, window.width, window.height);
 
-        GLFWKeyCallback.create((window, key, scancode, action, mods) -> {
-            if (key == GLFW.GLFW_KEY_RIGHT){
-                up = false;
-                angle+=15;
-            }
-            if (key == GLFW.GLFW_KEY_UP){
-                up = true;
-                angle+=15;
-            }
-        }).set(window.windowId);
-
+        // For calc FPS
         time = System.currentTimeMillis();
     }
 
-    float angle = 0;
-    boolean up;
-
-    void start() {
+    public void start() {
         System.out.println("Program started");
-        new Thread(this, "program").start();
+        new Thread(this, "programThread").start();
     }
 
     void render() {
-//        GL20.glTranslated(0,0,-5f);
-
-        if (up){
-            GL20.glRotated(angle, 1, 0, 0);
-        }else{
-            GL20.glRotated(-angle, 0, 1, 0);
-        }
-
-
-        renderer.renderMesh(mesh);
-
-//        if (Camera.isUpdating){
-//            Camera.isUpdating = false;
-//            camera.render();
-//        }
-
+        renderer.renderMesh(eObject1, camera);
         window.swapBuffer();
         calcFPS();
     }
@@ -107,6 +79,7 @@ public class Program implements Runnable {
     void destroy() {
         shader.destroy();
         mesh.destroy();
+        callbackManager.destroy();
         window.destroy();
     }
 

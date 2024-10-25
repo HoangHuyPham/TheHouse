@@ -1,8 +1,14 @@
 package engine;
 
+import org.joml.Matrix4f;
+import org.joml.Vector2f;
+import org.joml.Vector3f;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
+import org.lwjgl.system.MemoryUtil;
 import utils.file.File;
+
+import java.nio.FloatBuffer;
 
 public class Shader {
     public String vertexShaderSource;
@@ -12,6 +18,32 @@ public class Shader {
         this.vertexShaderSource = vertexShaderSource;
         this.fragmentShaderSource = fragmentShaderSource;
     }
+
+    public void setUniform(String name, int value){
+        GL30.glUniform1i(GL30.glGetUniformLocation(this.program, name), value);
+    }
+
+    public void setUniform(String name, float value){
+        GL30.glUniform1f(GL30.glGetUniformLocation(this.program, name), value);
+    }
+
+    public void setUniform(String name, Vector2f value){
+        GL30.glUniform2f(GL30.glGetUniformLocation(this.program, name), value.x, value.y);
+    }
+
+    public void setUniform(String name, Vector3f value){
+        GL30.glUniform3f(GL30.glGetUniformLocation(this.program, name), value.x, value.y, value.z);
+    }
+
+    public void setUniform(String name, Matrix4f value){
+        FloatBuffer buffer = MemoryUtil.memAllocFloat(4*4);
+        float[] data = new float[4*4];
+        value.get(data);
+        buffer.put(data).flip();
+        GL30.glUniformMatrix4fv(GL30.glGetUniformLocation(this.program, name),false, buffer);
+    }
+
+
     public void create() {
         loadVertexShader();
         loadFragmentShader();

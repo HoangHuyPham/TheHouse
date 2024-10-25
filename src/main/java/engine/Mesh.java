@@ -29,6 +29,11 @@ public class Mesh{
         return new Mesh(obj.getVertices(), obj.getIndices());
     }
 
+    /**
+     * Only addTexture when OpenGL is ready
+     * @param fileName
+     * @return
+     */
     public Mesh addTexture(String fileName){
         this.textureId = TextureLoader.loadTexture(fileName);
         return this;
