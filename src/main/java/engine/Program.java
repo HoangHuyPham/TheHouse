@@ -73,6 +73,7 @@ public class Program implements Runnable {
     }
 
     void update() {
+        camera.updateViewMatrix();
         window.update();
     }
 

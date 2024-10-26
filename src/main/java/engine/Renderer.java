@@ -16,7 +16,6 @@ public class Renderer {
         bindMesh(mesh);
 
         GL30.glUseProgram(shader.program);
-        GL30.glAttachShader(shader.program, shader.vertexShader);
         shader.setUniform("model", eObject.getMatrix());
         shader.setUniform("view", eCamera.getView());
         shader.setUniform("projection", eCamera.getProjection());
