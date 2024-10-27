@@ -17,6 +17,8 @@ public class Window {
     private long windowId;
     private CallbackManager callbackManager;
     private float lastX, lastY;
+    @Builder.Default
+    private boolean isFirstCursor = true;
 
     public static float deltaTime, lastFrame;
 

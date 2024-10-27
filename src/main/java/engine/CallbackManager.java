@@ -59,26 +59,18 @@ public class CallbackManager {
             float xoffset = (float) xpos - window.getLastX();
             float yoffset = window.getLastY() - (float) ypos;
 
+            if (window.isFirstCursor()){
+                window.setFirstCursor(false);
+                window.setLastX((float) xpos);
+                window.setLastY((float) ypos);
+                xoffset = 0;
+                yoffset = 0;
+            }
+
             window.setLastX((float) xpos);
             window.setLastY((float) ypos);
 
-            float sensitivity = 0.05f;
-            xoffset *= sensitivity;
-            yoffset *= sensitivity;
-
-            camera.setPitch(camera.getPitch() + yoffset);
-            camera.setYaw(camera.getYaw() + xoffset);
-
-            if(camera.getPitch() > 89.0f)
-                camera.setPitch(89.0f);
-            if(camera.getPitch() < -89.0f)
-                camera.setPitch(-89.0f);
-
-            Vector3f direction = new Vector3f();
-            direction.x = Math.cos(Math.toRadians(camera.getYaw())) * Math.cos(Math.toRadians(camera.getPitch()));
-            direction.y = Math.sin(Math.toRadians(camera.getPitch()));
-            direction.z = Math.sin(Math.toRadians(camera.getYaw())) * Math.cos(Math.toRadians(camera.getPitch()));
-            camera.setForward(direction.normalize());
+            camera.updateForwardByPointer(xoffset, yoffset);
         }).set(window.getWindowId());
 
         GLFWScrollCallback.create((w, deltaX, deltaY) -> {
@@ -92,8 +84,8 @@ public class CallbackManager {
             else
                 camera.setFov(fov);
 
-
             camera.updateProjectionMatrix((float) window.getWidth()/ window.getHeight());
+
         }).set(window.getWindowId());
     }
 

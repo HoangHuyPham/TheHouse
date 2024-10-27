@@ -19,22 +19,45 @@ public class ECamera {
     @Builder.Default private Vector3f up = new Vector3f(0, 1, 0);
     @Builder.Default private float speed = 2.5f;
     @Builder.Default private float pitch = 0, yaw = -90f, roll = 0;
+    @Builder.Default float sensitivity = 0.05f;
     private Matrix4f projection;
     private Matrix4f view;
 
     /**
-     * Calculate View Matrix again
+     * Update view matrix, should be called after modify {@systemProperty position}, {@systemProperty forward} or {@systemProperty up} of {@link ECamera}
      */
     public void updateViewMatrix(){
         view = new Matrix4f().lookAt(position, position.add(forward, new Vector3f()), up);
     }
 
     /**
-     * Calculate Projection Matrix again
+     * Update projection matrix, should be called after modify {@systemProperty fov} of {@link ECamera}
      */
     public void updateProjectionMatrix(float aspect){
-        System.out.println(fov);
         projection = new Matrix4f().perspective(Math.toRadians(fov), aspect, 1.0f, 100.0f);
+    }
+
+    /**
+     * Update {@systemProperty forward} follow current x, y offset mouse
+     * @param xOffset
+     * @param yOffset
+     */
+    public void updateForwardByPointer(float xOffset, float yOffset){
+        setPitch(getPitch() + yOffset * this.sensitivity);
+        setYaw(getYaw() + xOffset * this.sensitivity);
+
+        // Limit euler angle
+        if(getPitch() >= 90.0f)
+            setPitch(90.0f);
+        if(getPitch() < -90.0f)
+            setPitch(-90.0f);
+
+        Vector3f direction = new Vector3f();
+        direction.x = Math.cos(Math.toRadians(getYaw())) * Math.cos(Math.toRadians(getPitch()));
+        direction.y = Math.sin(Math.toRadians(getPitch()));
+        direction.z = Math.sin(Math.toRadians(getYaw())) * Math.cos(Math.toRadians(getPitch()));
+
+        setForward(direction.normalize());
     }
 
     public void moveUp(){
