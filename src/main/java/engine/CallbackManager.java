@@ -25,7 +25,10 @@ public class CallbackManager {
             this.window.setWidth(width);
             this.window.setHeight(height);
             this.window.updateViewPort();
-            camera.updateProjectionMatrix((float) width / height);
+
+            camera.setAspect((float) width / height);
+            camera.setShouldProjectionUpdate(true);
+
             System.out.println("Window size has changed");
         }).set(window.getWindowId());
 
@@ -39,18 +42,22 @@ public class CallbackManager {
 
                     case GLFW_KEY_W -> {
                         camera.moveUp();
+                        camera.setShouldViewUpdate(true);
                     }
 
                     case GLFW_KEY_S -> {
                         camera.moveDown();
+                        camera.setShouldViewUpdate(true);
                     }
 
                     case GLFW_KEY_D -> {
                         camera.moveRight();
+                        camera.setShouldViewUpdate(true);
                     }
 
                     case GLFW_KEY_A -> {
                         camera.moveLeft();
+                        camera.setShouldViewUpdate(true);
                     }
                 }
         }).set(window.getWindowId());
@@ -71,6 +78,8 @@ public class CallbackManager {
             window.setLastY((float) ypos);
 
             camera.updateForwardByPointer(xoffset, yoffset);
+            camera.setShouldViewUpdate(true);
+
         }).set(window.getWindowId());
 
         GLFWScrollCallback.create((w, deltaX, deltaY) -> {
@@ -84,7 +93,8 @@ public class CallbackManager {
             else
                 camera.setFov(fov);
 
-            camera.updateProjectionMatrix((float) window.getWidth()/ window.getHeight());
+            camera.setAspect((float) window.getWidth()/ window.getHeight());
+            camera.setShouldProjectionUpdate(true);
 
         }).set(window.getWindowId());
     }

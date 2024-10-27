@@ -17,24 +17,41 @@ public class ECamera {
     @Builder.Default private Vector3f position = new Vector3f(0, 0, 0);
     @Builder.Default private Vector3f forward = new Vector3f(0, 0, -1);
     @Builder.Default private Vector3f up = new Vector3f(0, 1, 0);
-    @Builder.Default private float speed = 2.5f;
     @Builder.Default private float pitch = 0, yaw = -90f, roll = 0;
-    @Builder.Default float sensitivity = 0.05f;
-    private Matrix4f projection;
-    private Matrix4f view;
+    @Builder.Default private float sensitivity = 0.05f, speed = 2.5f, aspect = 1.0f;
+    @Builder.Default private Matrix4f projection = new Matrix4f().identity();
+    @Builder.Default private Matrix4f view = new Matrix4f().identity();
+    @Builder.Default private boolean shouldViewUpdate = true;
+    @Builder.Default private boolean shouldProjectionUpdate = true;
+
+    @Builder.Default private final Object lockView = new Object(), lockProjection = new Object();
 
     /**
-     * Update view matrix, should be called after modify {@systemProperty position}, {@systemProperty forward} or {@systemProperty up} of {@link ECamera}
+     * If {@systemProperty shouldViewUpdate} is not set to {@code true} before call {@code getView()}, it will return cache Matrix
+     * @return {@link Matrix4f}
      */
-    public void updateViewMatrix(){
-        view = new Matrix4f().lookAt(position, position.add(forward, new Vector3f()), up);
+    public Matrix4f getView(){
+        if (shouldViewUpdate){
+            synchronized (lockView){
+                view.identity().lookAt(position, position.add(forward, new Vector3f()), up);
+                shouldViewUpdate = false;
+            }
+        }
+        return view;
     }
 
     /**
-     * Update projection matrix, should be called after modify {@systemProperty fov} of {@link ECamera}
+     * If {@systemProperty shouldProjectionUpdate} is not set to {@code true} before call {@code getProjection()}, it will return cache Matrix
+     * @return {@link Matrix4f}
      */
-    public void updateProjectionMatrix(float aspect){
-        projection = new Matrix4f().perspective(Math.toRadians(fov), aspect, 1.0f, 100.0f);
+    public Matrix4f getProjection(){
+        if (shouldProjectionUpdate){
+            synchronized (lockProjection){
+                projection.identity().perspective(Math.toRadians(fov), aspect, 1.0f, 100.0f);;
+                shouldProjectionUpdate = false;
+            }
+        }
+        return projection;
     }
 
     /**

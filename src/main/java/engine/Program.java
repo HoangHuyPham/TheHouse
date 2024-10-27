@@ -52,8 +52,10 @@ public class Program implements Runnable {
         box.create();
         renderer = new Renderer.RendererBuilder().shader(shader).build();
 
-        camera.updateViewMatrix();
-        camera.updateProjectionMatrix((float) window.getWidth()/ window.getHeight());
+
+        camera.setAspect((float) window.getWidth()/ window.getHeight());
+        camera.setShouldProjectionUpdate(true);
+        camera.setShouldViewUpdate(true);
 
         GL20.glEnable(GL20.GL_DEPTH_TEST);
 
@@ -73,7 +75,6 @@ public class Program implements Runnable {
     }
 
     void update() {
-        camera.updateViewMatrix();
         window.update();
     }
 
