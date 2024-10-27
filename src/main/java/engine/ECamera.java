@@ -14,7 +14,7 @@ public class ECamera {
     @Builder.Default private Vector3f position = new Vector3f(0, 0, 0);
     @Builder.Default private Vector3f target = new Vector3f(0, 0, -1);
     @Builder.Default private Vector3f up = new Vector3f(0, 1, 0);
-    @Builder.Default private float speed = 0.05f;
+    @Builder.Default private float speed = 2.5f;
     private Matrix4f projection;
     private Matrix4f view;
 
@@ -33,19 +33,20 @@ public class ECamera {
     }
 
     public void moveUp(){
-        position.add(target.mul(speed, new Vector3f()));
+
+        position.add(target.mul(speed * Window.deltaTime, new Vector3f()));
     }
 
     public void moveDown(){
-        position.sub(target.mul(speed, new Vector3f()));
+        position.sub(target.mul(speed * Window.deltaTime, new Vector3f()));
     }
 
     public void moveLeft(){
-        position.sub(target.cross(up, new Vector3f()).normalize().mul(speed));
+        position.sub(target.cross(up, new Vector3f()).normalize().mul(speed * Window.deltaTime));
     }
 
     public void moveRight(){
-        position.add(target.cross(up, new Vector3f()).normalize().mul(speed));
+        position.add(target.cross(up, new Vector3f()).normalize().mul(speed * Window.deltaTime));
     }
 
     public void setTarget(Vector3f target){

@@ -17,6 +17,8 @@ public class Window {
     private long windowId;
     private CallbackManager callbackManager;
 
+    public static float deltaTime, lastFrame;
+
     void create(){
         if (!glfwInit()){
             System.err.println("GLFW failed to initialize");
@@ -41,6 +43,7 @@ public class Window {
     }
 
     void swapBuffer(){
+        updateDeltaTime();
         glfwSwapBuffers(windowId);
     }
 
@@ -62,5 +65,14 @@ public class Window {
 
     void showFPS(int fpsCount) {
         glfwSetWindowTitle(windowId, title.concat(" | "+"FPS: "+fpsCount));
+    }
+
+    /**
+     * update delta time on per current frame
+     */
+    void updateDeltaTime(){
+        float currentFrame = (float)glfwGetTime();
+        deltaTime = currentFrame - lastFrame;
+        lastFrame = currentFrame;
     }
 }
