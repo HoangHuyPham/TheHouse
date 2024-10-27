@@ -16,6 +16,7 @@ public class Window {
     private String title;
     private long windowId;
     private CallbackManager callbackManager;
+    private float lastX, lastY;
 
     public static float deltaTime, lastFrame;
 
@@ -35,6 +36,7 @@ public class Window {
         glfwMakeContextCurrent(windowId);
         glfwSwapInterval(1);
         GL.createCapabilities();
+        glfwSetInputMode(windowId, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         updateViewPort();
     }
 
