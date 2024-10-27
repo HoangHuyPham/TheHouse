@@ -47,7 +47,7 @@ public class Mesh{
         for (int i = 0; i < vertices.length; i++) {
             data[i*8] = vertices[i].position.x;
             data[i*8+1] = vertices[i].position.y;
-            data[i*8+2] = vertices[i].position.y;
+            data[i*8+2] = vertices[i].position.z;
 
             data[i*8+3] = vertices[i].color.x;
             data[i*8+4] = vertices[i].color.y;
