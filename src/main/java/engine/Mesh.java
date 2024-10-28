@@ -43,26 +43,32 @@ public class Mesh{
         vao = GL30.glGenVertexArrays();
         GL30.glBindVertexArray(vao);
 
-        float[] data = new float[vertices.length * 8];
+        int VAOSize = 11;
+        float[] data = new float[vertices.length * VAOSize];
         for (int i = 0; i < vertices.length; i++) {
-            data[i*8] = vertices[i].position.x;
-            data[i*8+1] = vertices[i].position.y;
-            data[i*8+2] = vertices[i].position.z;
+            data[i*VAOSize] = vertices[i].position.x;
+            data[i*VAOSize+1] = vertices[i].position.y;
+            data[i*VAOSize+2] = vertices[i].position.z;
 
-            data[i*8+3] = vertices[i].color.x;
-            data[i*8+4] = vertices[i].color.y;
-            data[i*8+5] = vertices[i].color.z;
+            data[i*VAOSize+3] = vertices[i].color.x;
+            data[i*VAOSize+4] = vertices[i].color.y;
+            data[i*VAOSize+5] = vertices[i].color.z;
 
-            data[i*8+6] = vertices[i].texture.x;
-            data[i*8+7] = vertices[i].texture.y;
+            data[i*VAOSize+6] = vertices[i].normal.x;
+            data[i*VAOSize+7] = vertices[i].normal.y;
+            data[i*VAOSize+8] = vertices[i].normal.z;
+
+            data[i*VAOSize+9] = vertices[i].texture.x;
+            data[i*VAOSize+10] = vertices[i].texture.y;
         }
 
         vbo = GL30.glGenBuffers();
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbo);
         GL15.glBufferData(GL15.GL_ARRAY_BUFFER, data, GL15.GL_STATIC_DRAW);
-        GL30.glVertexAttribPointer(0, 3, GL30.GL_FLOAT, false, Float.BYTES * 8, 0);
-        GL30.glVertexAttribPointer(1, 3, GL30.GL_FLOAT, false, Float.BYTES * 8, Float.BYTES * 3);
-        GL30.glVertexAttribPointer(2, 2, GL30.GL_FLOAT, false, Float.BYTES * 8, Float.BYTES * 6);
+        GL30.glVertexAttribPointer(0, 3, GL30.GL_FLOAT, false, Float.BYTES * 11, 0);
+        GL30.glVertexAttribPointer(1, 3, GL30.GL_FLOAT, false, Float.BYTES * 11, Float.BYTES * 3);
+        GL30.glVertexAttribPointer(2, 3, GL30.GL_FLOAT, false, Float.BYTES * 11, Float.BYTES * 6);
+        GL30.glVertexAttribPointer(3, 2, GL30.GL_FLOAT, false, Float.BYTES * 11, Float.BYTES * 9);
         GL30.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 
 

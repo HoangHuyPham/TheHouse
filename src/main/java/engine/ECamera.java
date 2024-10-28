@@ -18,7 +18,7 @@ public class ECamera {
     @Builder.Default private Vector3f forward = new Vector3f(0, 0, -1);
     @Builder.Default private Vector3f up = new Vector3f(0, 1, 0);
     @Builder.Default private float pitch = 0, yaw = -90f, roll = 0;
-    @Builder.Default private float sensitivity = 0.05f, speed = 2.5f, aspect = 1.0f;
+    @Builder.Default private float sensitivity = 0.05f, speed = 5f, aspect = 1.0f;
     @Builder.Default private Matrix4f projection = new Matrix4f().identity();
     @Builder.Default private Matrix4f view = new Matrix4f().identity();
     @Builder.Default private boolean shouldViewUpdate = true;

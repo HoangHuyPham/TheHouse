@@ -1,13 +1,15 @@
-package engine;
+package engine.object;
 
+import engine.Mesh;
 import lombok.*;
-import org.joml.Math;
+import lombok.experimental.SuperBuilder;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
-@Builder
+@SuperBuilder
 @Getter
-public class EObject {
+@Setter
+public abstract class EObject {
     private Vector3f position;
     @Builder.Default
     private Vector3f rotation = new Vector3f(0f, 0f, 0f);
@@ -16,12 +18,6 @@ public class EObject {
     @Builder.Default private Matrix4f matrix = new Matrix4f().identity();
     @Builder.Default private boolean shouldUpdate = true;
     private Mesh mesh;
-
-
-    public static class EObjectBuilder {
-        public EObjectBuilder() {
-        }
-    }
 
     /**
      * If {@systemProperty shouldUpdate} is not set to {@code true} before call {@code getModelMatrix()}, it will return cache Matrix
