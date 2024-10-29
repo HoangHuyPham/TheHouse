@@ -1,14 +1,11 @@
 package engine;
 
 import engine.object.BasicObject;
-import engine.object.EObject;
 import engine.object.Light;
 import engine.object.Textures;
-import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL30;
-import org.lwjgl.system.MemoryUtil;
 
 public class Renderer {
 
@@ -18,9 +15,14 @@ public class Renderer {
         bindMesh(mesh);
         GL30.glUseProgram(shader.program);
 
+        shader.setUniform("color", light.getColor());
         shader.setUniform("model", light.getModelMatrix());
         shader.setUniform("view", camera.getView());
+        camera.setZfar(Float.POSITIVE_INFINITY);
+        camera.setShouldProjectionUpdate(true);
         shader.setUniform("projection", camera.getProjection());
+        camera.setZfar(ECamera.DEFAULT_ZFAR);
+        camera.setShouldProjectionUpdate(true);
 
         if (mesh.getHasTexture() == Textures.HAS_TEXTURE) {
             bindTexture(mesh.getTextureId());

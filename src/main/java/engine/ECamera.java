@@ -13,12 +13,13 @@ import org.joml.Vector3f;
 @Setter
 @Builder
 public class ECamera {
+    static float DEFAULT_ZFAR = 50.0f;
     @Builder.Default private float fov = 45f;
     @Builder.Default private Vector3f position = new Vector3f(0, 0, 0);
-    @Builder.Default private Vector3f forward = new Vector3f(0, 0, -1);
+    @Builder.Default private Vector3f forward = new Vector3f(0, 0, -1f);
     @Builder.Default private Vector3f up = new Vector3f(0, 1, 0);
     @Builder.Default private float pitch = 0, yaw = -90f, roll = 0;
-    @Builder.Default private float sensitivity = 0.05f, speed = 5f, aspect = 1.0f;
+    @Builder.Default private float sensitivity = 0.05f, speed = 5f, aspect = 1.0f, zNear = 1.0f, zfar = DEFAULT_ZFAR;
     @Builder.Default private Matrix4f projection = new Matrix4f().identity();
     @Builder.Default private Matrix4f view = new Matrix4f().identity();
     @Builder.Default private boolean shouldViewUpdate = true;
@@ -47,7 +48,7 @@ public class ECamera {
     public Matrix4f getProjection(){
         if (shouldProjectionUpdate){
             synchronized (lockProjection){
-                projection.identity().perspective(Math.toRadians(fov), aspect, 1.0f, 100.0f);;
+                projection.identity().perspective(Math.toRadians(fov), aspect, zNear, zfar);;
                 shouldProjectionUpdate = false;
             }
         }

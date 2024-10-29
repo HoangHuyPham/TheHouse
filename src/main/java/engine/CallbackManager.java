@@ -78,8 +78,6 @@ public class CallbackManager {
 
             if (window.isFirstCursor()){
                 window.setFirstCursor(false);
-                window.setLastX((float) xpos);
-                window.setLastY((float) ypos);
                 xoffset = 0;
                 yoffset = 0;
             }

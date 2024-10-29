@@ -2,8 +2,8 @@ package engine;
 
 import engine.object.BasicObject;
 import engine.object.Light;
+import engine.tick.Ticker;
 import lombok.Getter;
-import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL20;
 import utils.file.File;
@@ -13,6 +13,7 @@ public class Program implements Runnable {
     Window window = Window.builder().width(1024).height(768).title("The House").build();
     ECamera camera = ECamera.builder().position(new Vector3f(0,0,5f)).build();
     CallbackManager callbackManager = new CallbackManager(window, camera);
+    Ticker ticker = new Ticker();
     long time;
     int frameCount;
     public Mesh mesh = new Mesh(new Vertex[]{
@@ -117,11 +118,11 @@ public class Program implements Runnable {
 
     public Mesh box = Mesh.parseMesh(File.getObj("obj/box.obj", true));
     public BasicObject basicObject = BasicObject.builder().position(new Vector3f(0f,0f,0f)).rotation(new Vector3f(0, 0, 0)).mesh(mesh).build();
-    public Light lightObject = Light.builder().position(new Vector3f(1f,1f,0f)).scale(new Vector3f(0.5f, 0.5f, 0.5f)).mesh(mesh).build();
-
+    public Light sun = Light.builder().position(new Vector3f(0f,0f,0f)).scale(new Vector3f(100000f,100000f,100000f)).mesh(mesh).build();
     @Override
     public void run() {
         init();
+        ticker.start();
         loop();
     }
 
@@ -145,8 +146,9 @@ public class Program implements Runnable {
         camera.setShouldProjectionUpdate(true);
         camera.setShouldViewUpdate(true);
 
-        GL20.glEnable(GL20.GL_DEPTH_TEST);
+        ticker.registerTickable(sun);
 
+        GL20.glEnable(GL20.GL_DEPTH_TEST);
         // For calc FPS
         time = System.currentTimeMillis();
     }
@@ -157,8 +159,8 @@ public class Program implements Runnable {
     }
 
     void render() {
-        Renderer.renderBasic(basicObject, camera, lightObject);
-        Renderer.renderLight(lightObject, camera);
+        Renderer.renderLight(sun, camera);
+        Renderer.renderBasic(basicObject, camera, sun);
         window.swapBuffer();
         calcFPS();
     }
@@ -168,6 +170,7 @@ public class Program implements Runnable {
     }
 
     void destroy() {
+        ticker.destroy();
         Shaders.destroyAll();
         mesh.destroy();
         callbackManager.destroy();
