@@ -59,6 +59,16 @@ public class CallbackManager {
                         camera.moveLeft();
                         camera.setShouldViewUpdate(true);
                     }
+
+                    case GLFW_KEY_SPACE -> {
+                        camera.flyUp();
+                        camera.setShouldViewUpdate(true);
+                    }
+
+                    case GLFW_KEY_LEFT_SHIFT -> {
+                        camera.flyDown();
+                        camera.setShouldViewUpdate(true);
+                    }
                 }
         }).set(window.getWindowId());
 

@@ -1,7 +1,9 @@
 package engine;
 
+import engine.object.Textures;
 import lombok.Getter;
 import org.lwjgl.opengl.*;
+import org.lwjgl.system.MemoryUtil;
 
 @Getter
 public class Mesh{
@@ -9,6 +11,7 @@ public class Mesh{
     final private int[] indices;
     private int vao, vbo, ibo;
     private int textureId;
+    private byte hasTexture = Textures.NO_TEXTURE;
 
     public Mesh(Vertex[] vertices, int[] indices) {
         this.vertices = vertices;
@@ -18,11 +21,14 @@ public class Mesh{
     public Mesh(Vertex[] vertices, int[] indices, int textureId) {
         this(vertices, indices);
         this.textureId = textureId;
+        if (this.textureId != MemoryUtil.NULL) {
+            this.hasTexture = Textures.HAS_TEXTURE;
+        }
     }
 
     public Mesh(Vertex[] vertices, int[] indices, String texture) {
         this(vertices, indices);
-        this.textureId = TextureLoader.loadTexture(texture);
+        addTexture(texture);
     }
 
     public static Mesh parseMesh(Obj obj){
@@ -36,6 +42,9 @@ public class Mesh{
      */
     public Mesh addTexture(String fileName){
         this.textureId = TextureLoader.loadTexture(fileName);
+        if (this.textureId != MemoryUtil.NULL) {
+            this.hasTexture = Textures.HAS_TEXTURE;
+        }
         return this;
     }
 

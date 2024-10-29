@@ -157,8 +157,8 @@ public class Program implements Runnable {
     }
 
     void render() {
-        Renderer.renderMesh(basicObject, camera);
-        Renderer.renderMesh(lightObject, camera);
+        Renderer.renderBasic(basicObject, camera, lightObject);
+        Renderer.renderLight(lightObject, camera);
         window.swapBuffer();
         calcFPS();
     }

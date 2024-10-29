@@ -1,40 +1,59 @@
 #version 330 core
 out vec4 FragColor;
+
 in vec3 color;
 in vec2 textureCoord;
-in vec3 Normal;
-in vec3 FragPos;
+in vec3 normal;
+in vec3 fragPos;
 
-uniform sampler2D texture;
+struct Material {
+    vec3 ambient, diffuse, specular;
+    float shininess;
+};
+
+struct Light {
+    vec3 position, color, ambient, diffuse, specular;
+};
+
+struct Camera {
+    vec3 position;
+};
+
+uniform sampler2D textureUnit;
 uniform bool useTexture;
-uniform vec3 lightPos;
-uniform vec3 viewPos;
-uniform vec3 lightColor;
-uniform vec3 objectColor;
+uniform Material material;
+uniform Light light;
+uniform Camera camera;
 
 void main()
 {
-    if (useTexture){
-        FragColor = texture(texture, textureCoord);
-    } else {
-        // ambient
-        float ambientStrength = 0.1;
-        vec3 ambient = ambientStrength * lightColor;
+    // ambient
+    vec3 ambient = material.ambient * light.ambient;
 
-        // diffuse
-        vec3 norm = normalize(Normal);
-        vec3 lightDir = normalize(lightPos - FragPos);
-        float diff = max(dot(norm, lightDir), 0.0);
-        vec3 diffuse = diff * lightColor;
+    // diffuse
+    vec3 lightDirect = normalize(light.position - fragPos);
+    float diff = max(dot(normal, lightDirect), 0.0);
 
-        // specular
-        float specularStrength = 0.5;
-        vec3 viewDir = normalize(viewPos - FragPos);
-        vec3 reflectDir = reflect(-lightDir, norm);
-        float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
-        vec3 specular = specularStrength * spec * lightColor;
+    vec3 diffuse = diff * light.diffuse * material.diffuse;
 
-        vec3 result = (ambient + diffuse + specular) * objectColor;
+    // specular
+    vec3 cameraDirect = normalize(camera.position - fragPos);
+    vec3 reflectDirect = reflect(-lightDirect, normal);
+    float spec = pow(max(dot(cameraDirect, reflectDirect), 0.0), material.shininess * 128);
+
+    vec3 specular = material.specular * light.specular * spec;
+
+    // result
+    vec3 result = (ambient + diffuse + specular) * color * light.color;
+
+    if (useTexture)
+    {
+        FragColor = texture(textureUnit, textureCoord) * vec4(result, 1.0);
+    }
+    else
+    {
         FragColor = vec4(result, 1.0);
     }
+
 }
+

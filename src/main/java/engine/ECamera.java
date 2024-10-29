@@ -77,6 +77,14 @@ public class ECamera {
         setForward(direction.normalize());
     }
 
+    public void flyUp(){
+        position.add(up.mul(speed * Window.deltaTime, new Vector3f()));
+    }
+
+    public void flyDown(){
+        position.sub(up.mul(speed * Window.deltaTime, new Vector3f()));
+    }
+
     public void moveUp(){
         position.add(forward.mul(speed * Window.deltaTime, new Vector3f()));
     }

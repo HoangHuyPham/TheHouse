@@ -11,10 +11,8 @@ import org.joml.Vector3f;
 @Setter
 public abstract class EObject {
     private Vector3f position;
-    @Builder.Default
-    private Vector3f rotation = new Vector3f(0f, 0f, 0f);
-    @Builder.Default
-    private Vector3f scale = new Vector3f(1.0f, 1.0f, 1.0f);
+    @Builder.Default private Vector3f rotation = new Vector3f(0f, 0f, 0f);
+    @Builder.Default private Vector3f scale = new Vector3f(1.0f, 1.0f, 1.0f);
     @Builder.Default private Matrix4f matrix = new Matrix4f().identity();
     @Builder.Default private boolean shouldUpdate = true;
     private Mesh mesh;
