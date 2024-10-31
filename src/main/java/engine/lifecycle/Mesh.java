@@ -1,27 +1,23 @@
-package engine;
+package engine.lifecycle;
 
-import engine.object.Textures;
+import engine.object.Obj;
+import engine.object.Vertex;
+import lombok.Builder;
 import lombok.Getter;
 import org.lwjgl.opengl.*;
-import org.lwjgl.system.MemoryUtil;
 
 @Getter
-public class Mesh{
+@Builder
+public class Mesh implements ELifeCycle {
     final private Vertex[] vertices;
     final private int[] indices;
     private int vao, vbo, ibo;
-    private int textureId;
-    private byte hasTexture = Textures.NO_TEXTURE;
-
-    public Mesh(Vertex[] vertices, int[] indices) {
-        this.vertices = vertices;
-        this.indices = indices;
-    }
 
     public static Mesh parseMesh(Obj obj){
-        return new Mesh(obj.getVertices(), obj.getIndices());
+        return Mesh.builder().vertices(obj.getVertices()).indices(obj.getIndices()).build();
     }
 
+    @Override
     public void create(){
         vao = GL30.glGenVertexArrays();
         GL30.glBindVertexArray(vao);
@@ -54,17 +50,17 @@ public class Mesh{
         GL30.glVertexAttribPointer(3, 2, GL30.GL_FLOAT, false, Float.BYTES * 11, Float.BYTES * 9);
         GL30.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 
+        if (indices == null)
+            return;
 
         ibo = GL30.glGenBuffers();
         GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, ibo);
         GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, indices, GL15.GL_STATIC_DRAW);
         GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
-
-
-        GL30.glBindVertexArray(0);
     }
 
 
+    @Override
     public void destroy(){
         GL30.glDeleteVertexArrays(vao);
         GL30.glDeleteBuffers(vbo);

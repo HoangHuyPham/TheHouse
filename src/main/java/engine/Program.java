@@ -1,10 +1,13 @@
 package engine;
 
-import engine.object.BasicObject;
-import engine.object.Light;
-import engine.object.Material;
+import engine.constant.Meshes;
+import engine.constant.Shaders;
+import engine.constant.Textures;
+import engine.lifecycle.Mesh;
+import engine.object.*;
 import engine.tick.Ticker;
 import lombok.Getter;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL20;
 import utils.file.File;
@@ -12,118 +15,19 @@ import utils.file.File;
 @Getter
 public class Program implements Runnable {
     Window window = Window.builder().width(1024).height(768).title("The House").build();
-    ECamera camera = ECamera.builder().position(new Vector3f(0,0,5f)).build();
-    CallbackManager callbackManager = new CallbackManager(window, camera);
+    ECamera camera = ECamera.builder().position(new Vector3f(0, 0, 5f)).build();
+    CallbackManager callbackManager = CallbackManager.builder().window(window).camera(camera).build();
     Ticker ticker = new Ticker();
     long time;
     int frameCount;
-    public Mesh mesh = new Mesh(new Vertex[]{
-            // Front face
-            new Vertex.VertexBuilder()
-                    .position(new Vector3f(-0.5f, -0.5f,  0.5f))
-                    .normal(new Vector3f(0.0f,  0.0f,  1.0f)).build(),
-            new Vertex.VertexBuilder()
-                    .position(new Vector3f( 0.5f, -0.5f,  0.5f))
-                    .normal(new Vector3f(0.0f,  0.0f,  1.0f)).build(),
-            new Vertex.VertexBuilder()
-                    .position(new Vector3f( 0.5f,  0.5f,  0.5f))
-                    .normal(new Vector3f(0.0f,  0.0f,  1.0f)).build(),
-            new Vertex.VertexBuilder()
-                    .position(new Vector3f(-0.5f,  0.5f,  0.5f))
-                    .normal(new Vector3f(0.0f,  0.0f,  1.0f)).build(),
 
-            // Back face
-            new Vertex.VertexBuilder()
-                    .position(new Vector3f(-0.5f, -0.5f, -0.5f))
-                    .normal(new Vector3f(0.0f,  0.0f, -1.0f)).build(),
-            new Vertex.VertexBuilder()
-                    .position(new Vector3f( 0.5f, -0.5f, -0.5f))
-                    .normal(new Vector3f(0.0f,  0.0f, -1.0f)).build(),
-            new Vertex.VertexBuilder()
-                    .position(new Vector3f( 0.5f,  0.5f, -0.5f))
-                    .normal(new Vector3f(0.0f,  0.0f, -1.0f)).build(),
-            new Vertex.VertexBuilder()
-                    .position(new Vector3f(-0.5f,  0.5f, -0.5f))
-                    .normal(new Vector3f(0.0f,  0.0f, -1.0f)).build(),
+    public BasicObject basicObject = BasicObject.builder().position(new Vector3f(0f, 0f, 0f)).rotation(new Vector3f(0, 0, 0)).mesh(Meshes.BOX_NO_INDICES).build();
+    public Light sun = Light.builder().color(new Vector3f(1, 0.961f, 0.698f)).position(new Vector3f(0f, 0f, 0f)).scale(new Vector3f(100000f, 100000f, 100000f)).mesh(Meshes.SPHRERE_FROM_OBJ).build();
 
-            // Left face
-            new Vertex.VertexBuilder()
-                    .position(new Vector3f(-0.5f, -0.5f, -0.5f))
-                    .normal(new Vector3f(-1.0f, 0.0f, 0.0f)).build(),
-            new Vertex.VertexBuilder()
-                    .position(new Vector3f(-0.5f, -0.5f,  0.5f))
-                    .normal(new Vector3f(-1.0f, 0.0f, 0.0f)).build(),
-            new Vertex.VertexBuilder()
-                    .position(new Vector3f(-0.5f,  0.5f,  0.5f))
-                    .normal(new Vector3f(-1.0f, 0.0f, 0.0f)).build(),
-            new Vertex.VertexBuilder()
-                    .position(new Vector3f(-0.5f,  0.5f, -0.5f))
-                    .normal(new Vector3f(-1.0f, 0.0f, 0.0f)).build(),
-
-            // Right face
-            new Vertex.VertexBuilder()
-                    .position(new Vector3f(0.5f, -0.5f, -0.5f))
-                    .normal(new Vector3f(1.0f, 0.0f, 0.0f)).build(),
-            new Vertex.VertexBuilder()
-                    .position(new Vector3f(0.5f, -0.5f,  0.5f))
-                    .normal(new Vector3f(1.0f, 0.0f, 0.0f)).build(),
-            new Vertex.VertexBuilder()
-                    .position(new Vector3f(0.5f,  0.5f,  0.5f))
-                    .normal(new Vector3f(1.0f, 0.0f, 0.0f)).build(),
-            new Vertex.VertexBuilder()
-                    .position(new Vector3f(0.5f,  0.5f, -0.5f))
-                    .normal(new Vector3f(1.0f, 0.0f, 0.0f)).build(),
-
-            // Top face
-            new Vertex.VertexBuilder()
-                    .position(new Vector3f(-0.5f,  0.5f, -0.5f))
-                    .normal(new Vector3f(0.0f,  1.0f, 0.0f)).build(),
-            new Vertex.VertexBuilder()
-                    .position(new Vector3f( 0.5f,  0.5f, -0.5f))
-                    .normal(new Vector3f(0.0f,  1.0f, 0.0f)).build(),
-            new Vertex.VertexBuilder()
-                    .position(new Vector3f( 0.5f,  0.5f,  0.5f))
-                    .normal(new Vector3f(0.0f,  1.0f, 0.0f)).build(),
-            new Vertex.VertexBuilder()
-                    .position(new Vector3f(-0.5f,  0.5f,  0.5f))
-                    .normal(new Vector3f(0.0f,  1.0f, 0.0f)).build(),
-
-            // Bottom face
-            new Vertex.VertexBuilder()
-                    .position(new Vector3f(-0.5f, -0.5f, -0.5f))
-                    .normal(new Vector3f(0.0f, -1.0f, 0.0f)).build(),
-            new Vertex.VertexBuilder()
-                    .position(new Vector3f( 0.5f, -0.5f, -0.5f))
-                    .normal(new Vector3f(0.0f, -1.0f, 0.0f)).build(),
-            new Vertex.VertexBuilder()
-                    .position(new Vector3f( 0.5f, -0.5f,  0.5f))
-                    .normal(new Vector3f(0.0f, -1.0f, 0.0f)).build(),
-            new Vertex.VertexBuilder()
-                    .position(new Vector3f(-0.5f, -0.5f,  0.5f))
-                    .normal(new Vector3f(0.0f, -1.0f, 0.0f)).build()
-    }, new int[]{
-            // Front face
-            0, 1, 2, 2, 3, 0,
-            // Back face
-            4, 5, 6, 6, 7, 4,
-            // Left face
-            8, 9, 10, 10, 11, 8,
-            // Right face
-            12, 13, 14, 14, 15, 12,
-            // Top face
-            16, 17, 18, 18, 19, 16,
-            // Bottom face
-            20, 21, 22, 22, 23, 20
-    });
-
-
-    public Mesh box = Mesh.parseMesh(File.getObj("obj/box.obj", true));
-    public BasicObject basicObject = BasicObject.builder().position(new Vector3f(0f,0f,0f)).rotation(new Vector3f(0, 0, 0)).mesh(mesh).build();
-    public Light sun = Light.builder().position(new Vector3f(0f,0f,0f)).scale(new Vector3f(100000f,100000f,100000f)).mesh(mesh).build();
     @Override
     public void run() {
         init();
-        ticker.start();
+        subInit();
         loop();
     }
 
@@ -136,21 +40,24 @@ public class Program implements Runnable {
         destroy();
     }
 
+    void subInit(){
+        ticker.start();
+    }
+
     void init() {
         window.create(); // 4:3 ratio
         callbackManager.create();
         Shaders.create();
         Textures.create();
-        mesh.create();
-        box.create();
+        Meshes.create();
 
-        camera.setAspect((float) window.getWidth()/ window.getHeight());
+        // Set up camera
+        camera.setAspect((float) window.getWidth() / window.getHeight());
         camera.setShouldProjectionUpdate(true);
         camera.setShouldViewUpdate(true);
 
+        // Ticker register
         ticker.registerTickable(sun);
-
-        GL20.glEnable(GL20.GL_DEPTH_TEST);
         // For calc FPS
         time = System.currentTimeMillis();
     }
@@ -175,7 +82,7 @@ public class Program implements Runnable {
         ticker.destroy();
         Shaders.destroyAll();
         Textures.destroyAll();
-        mesh.destroy();
+        Meshes.destroyAll();
         callbackManager.destroy();
         window.destroy();
     }

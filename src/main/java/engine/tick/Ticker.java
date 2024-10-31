@@ -5,25 +5,24 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Ticker implements Runnable {
-    private long lastTime = System.currentTimeMillis();
+    private long lastTime;
     private final CopyOnWriteArrayList<Tickable> tickables = new CopyOnWriteArrayList<>();
     private final ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
     private volatile boolean isStop = false;
-    private static long tickTime = 0l;
+    public static long tickTimes = 0l;
 
     @Override
     public void run() {
+        lastTime = System.currentTimeMillis();
         while (!isStop) {
             try {
-                long now = System.currentTimeMillis();
-                float deltaTime = (now - lastTime) / 1000.0f;
                 Thread.sleep(99); // 10 ticks per second
-
+                long now = System.currentTimeMillis();
+                float deltaTime = (now - lastTime) / 1000f;
                 for (Tickable tickable : tickables) {
                     executor.submit(tickable::onTick);
                 }
-
-                tickTime ++;
+                tickTimes ++;
                 lastTime = now;
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();

@@ -1,4 +1,4 @@
-package engine;
+package engine.object;
 
 import lombok.*;
 import org.joml.Vector2f;
@@ -10,8 +10,4 @@ public class Vertex {
     @Builder.Default public final Vector3f color = new Vector3f(1f);
     @Builder.Default public final Vector3f normal = new Vector3f(0f);
     @Builder.Default public final Vector2f texture = new Vector2f(-1f);
-
-    public static class VertexBuilder {
-        public VertexBuilder() {} // Public constructor
-    }
 }

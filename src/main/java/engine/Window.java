@@ -19,7 +19,6 @@ public class Window {
     private float lastX, lastY;
     @Builder.Default
     private boolean isFirstCursor = true;
-
     public static float deltaTime, lastFrame;
 
     void create(){
@@ -38,6 +37,8 @@ public class Window {
         glfwMakeContextCurrent(windowId);
         glfwSwapInterval(1);
         GL.createCapabilities();
+        GL20.glEnable(GL20.GL_DEPTH_TEST);
+        GL20.glClearDepth(1);
         glfwSetInputMode(windowId, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         updateViewPort();
     }
@@ -52,10 +53,10 @@ public class Window {
     }
 
     void update(){
-        GL20.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-        GL20.glClearColor(0f, 0f, 0f, 0f);
-        GL20.glLoadIdentity();
         glfwPollEvents();
+        GL20.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+        GL20.glClearColor(0.533f, 0.988f, 0.929f, 0f);
+        GL20.glLoadIdentity();
     }
 
     void destroy() {
@@ -71,9 +72,8 @@ public class Window {
         glfwSetWindowTitle(windowId, title.concat(" | "+"FPS: "+fpsCount));
     }
 
-    /**
-     * update delta time on per current frame
-     */
+
+    // Update delta time on per current frame
     void updateDeltaTime(){
         float currentFrame = (float)glfwGetTime();
         deltaTime = currentFrame - lastFrame;

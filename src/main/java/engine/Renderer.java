@@ -1,8 +1,10 @@
 package engine;
 
-import engine.object.BasicObject;
-import engine.object.Light;
-import engine.object.Textures;
+import engine.constant.Shaders;
+import engine.constant.Textures;
+import engine.lifecycle.Mesh;
+import engine.lifecycle.Shader;
+import engine.object.*;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL30;
@@ -23,10 +25,6 @@ public class Renderer {
         shader.setUniform("projection", camera.getProjection());
         camera.setZfar(ECamera.DEFAULT_ZFAR);
         camera.setShouldProjectionUpdate(true);
-
-        if (mesh.getHasTexture() == Textures.HAS_TEXTURE) {
-            bindTexture(mesh.getTextureId());
-        }
 
         GL11.glDrawElements(GL11.GL_TRIANGLES, mesh.getIndices().length, GL11.GL_UNSIGNED_INT, 0);
 
@@ -57,12 +55,19 @@ public class Renderer {
         shader.setUniform("view", camera.getView());
         shader.setUniform("projection", camera.getProjection());
 
-        if (mesh.getHasTexture() == Textures.HAS_TEXTURE) {
-            bindTexture(mesh.getTextureId());
-        }
+        shader.setUniform("texture0", 0);
+        shader.setUniform("texture1", 1);
 
+        GL30.glActiveTexture(GL30.GL_TEXTURE0);
+        GL30.glBindTexture(GL11.GL_TEXTURE_2D, Textures.WALL.getTextureId());
+//
+//        GL30.glActiveTexture(GL30.GL_TEXTURE1);
+//        GL30.glBindTexture(GL11.GL_TEXTURE_2D, Textures.CONTAINER_TEX1.getTextureId());
 
-        GL11.glDrawElements(GL11.GL_TRIANGLES, mesh.getIndices().length, GL11.GL_UNSIGNED_INT, 0);
+        if (mesh.getIndices() != null)
+            GL11.glDrawElements(GL11.GL_TRIANGLES, mesh.getIndices().length, GL11.GL_UNSIGNED_INT, 0);
+        else
+            GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, 36);
 
         unbindMesh();
     }
@@ -108,8 +113,6 @@ public class Renderer {
 
     private static void bindTexture(int textureId) {
         GL30.glActiveTexture(GL30.GL_TEXTURE0);
-        Shaders.CORE_SHADER.setUniform("textureUnit", 0); //GL_TEXTURE0
         GL30.glBindTexture(GL11.GL_TEXTURE_2D, textureId);
-        GL30.glUniform1i(GL30.glGetUniformLocation(Shaders.CORE_SHADER.program, "useTexture"), 1);
     }
 }

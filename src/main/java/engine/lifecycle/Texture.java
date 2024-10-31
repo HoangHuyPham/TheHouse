@@ -1,6 +1,5 @@
-package engine;
+package engine.lifecycle;
 
-import engine.lifecycle.ELifeCycle;
 import lombok.Getter;
 import org.lwjgl.opengl.*;
 
@@ -22,6 +21,7 @@ public class Texture implements ELifeCycle {
     @Override
     public void create(){
         textureId = loadTexture(this.filename);
+        System.out.println("Texture created: " + filename);
     }
 
     @Override
@@ -34,7 +34,7 @@ public class Texture implements ELifeCycle {
         try {
             image = ImageIO.read(new File(Objects.requireNonNull(Texture.class.getClassLoader().getResource(fileName)).toURI()));
         } catch (Exception e) {
-            e.fillInStackTrace();
+            e.printStackTrace(System.err);
             return 0;
         }
 

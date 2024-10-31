@@ -1,6 +1,6 @@
 package engine.object;
 
-import engine.Texture;
+import engine.lifecycle.Texture;
 import lombok.Builder;
 import lombok.Getter;
 import org.joml.Vector3f;

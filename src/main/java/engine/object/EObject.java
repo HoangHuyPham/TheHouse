@@ -1,6 +1,6 @@
 package engine.object;
 
-import engine.Mesh;
+import engine.lifecycle.Mesh;
 import engine.tick.Tickable;
 import lombok.*;
 import lombok.experimental.SuperBuilder;

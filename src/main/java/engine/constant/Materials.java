@@ -1,5 +1,6 @@
-package engine.object;
+package engine.constant;
 
+import engine.object.Material;
 import org.joml.Vector3f;
 
 public class Materials {

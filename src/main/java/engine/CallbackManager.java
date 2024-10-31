@@ -1,8 +1,6 @@
 package engine;
 
 import lombok.Builder;
-import org.joml.Math;
-import org.joml.Vector3f;
 import org.lwjgl.glfw.*;
 
 import static org.lwjgl.glfw.GLFW.*;
