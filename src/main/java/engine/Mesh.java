@@ -18,34 +18,8 @@ public class Mesh{
         this.indices = indices;
     }
 
-    public Mesh(Vertex[] vertices, int[] indices, int textureId) {
-        this(vertices, indices);
-        this.textureId = textureId;
-        if (this.textureId != MemoryUtil.NULL) {
-            this.hasTexture = Textures.HAS_TEXTURE;
-        }
-    }
-
-    public Mesh(Vertex[] vertices, int[] indices, String texture) {
-        this(vertices, indices);
-        addTexture(texture);
-    }
-
     public static Mesh parseMesh(Obj obj){
         return new Mesh(obj.getVertices(), obj.getIndices());
-    }
-
-    /**
-     * Only addTexture when OpenGL is ready
-     * @param fileName
-     * @return
-     */
-    public Mesh addTexture(String fileName){
-        this.textureId = TextureLoader.loadTexture(fileName);
-        if (this.textureId != MemoryUtil.NULL) {
-            this.hasTexture = Textures.HAS_TEXTURE;
-        }
-        return this;
     }
 
     public void create(){

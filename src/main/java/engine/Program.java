@@ -2,6 +2,7 @@ package engine;
 
 import engine.object.BasicObject;
 import engine.object.Light;
+import engine.object.Material;
 import engine.tick.Ticker;
 import lombok.Getter;
 import org.joml.Vector3f;
@@ -139,6 +140,7 @@ public class Program implements Runnable {
         window.create(); // 4:3 ratio
         callbackManager.create();
         Shaders.create();
+        Textures.create();
         mesh.create();
         box.create();
 
@@ -172,6 +174,7 @@ public class Program implements Runnable {
     void destroy() {
         ticker.destroy();
         Shaders.destroyAll();
+        Textures.destroyAll();
         mesh.destroy();
         callbackManager.destroy();
         window.destroy();

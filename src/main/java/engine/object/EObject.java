@@ -1,6 +1,7 @@
 package engine.object;
 
 import engine.Mesh;
+import engine.tick.Tickable;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.joml.Matrix4f;
@@ -9,7 +10,7 @@ import org.joml.Vector3f;
 @SuperBuilder
 @Getter
 @Setter
-public abstract class EObject {
+public abstract class EObject implements Tickable {
     private Vector3f position;
     @Builder.Default private Vector3f rotation = new Vector3f(0f, 0f, 0f);
     @Builder.Default private Vector3f scale = new Vector3f(1.0f, 1.0f, 1.0f);

@@ -1,5 +1,6 @@
 package engine;
 
+import engine.lifecycle.ELifeCycle;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -10,7 +11,7 @@ import utils.file.File;
 
 import java.nio.FloatBuffer;
 
-public class Shader {
+public class Shader implements ELifeCycle {
     public String vertexShaderSource;
     public String fragmentShaderSource;
     public int program, vertexShader, fragmentShader;
@@ -43,7 +44,7 @@ public class Shader {
         GL30.glUniformMatrix4fv(GL30.glGetUniformLocation(this.program, name),false, buffer);
     }
 
-
+    @Override
     public void create() {
         loadVertexShader();
         loadFragmentShader();
@@ -52,6 +53,11 @@ public class Shader {
         GL30.glAttachShader(program, fragmentShader);
         GL30.glLinkProgram(program);
         cleanUp();
+    }
+
+    @Override
+    public void destroy(){
+        GL30.glDeleteProgram(program);
     }
 
     void loadVertexShader() {
@@ -77,9 +83,5 @@ public class Shader {
     void cleanUp(){
         GL20.glDeleteShader(vertexShader);
         GL20.glDeleteShader(fragmentShader);
-    }
-
-    public void destroy(){
-        GL30.glDeleteProgram(program);
     }
 }

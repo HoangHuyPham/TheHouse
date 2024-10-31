@@ -11,4 +11,7 @@ import lombok.experimental.SuperBuilder;
 public class BasicObject extends EObject {
     @Builder.Default
     Material material = Materials.EMERALD;
+
+    @Override
+    public void onTick() {}
 }

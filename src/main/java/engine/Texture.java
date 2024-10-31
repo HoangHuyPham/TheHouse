@@ -1,5 +1,7 @@
 package engine;
 
+import engine.lifecycle.ELifeCycle;
+import lombok.Getter;
 import org.lwjgl.opengl.*;
 
 import javax.imageio.ImageIO;
@@ -8,12 +10,29 @@ import java.io.File;
 import java.nio.ByteBuffer;
 import java.util.Objects;
 
-public class TextureLoader {
+@Getter
+public class Texture implements ELifeCycle {
+    private final String filename;
+    private int textureId;
 
-    public static int loadTexture(String fileName) {
+    public Texture(String fileName){
+        this.filename = fileName;
+    }
+
+    @Override
+    public void create(){
+        textureId = loadTexture(this.filename);
+    }
+
+    @Override
+    public void destroy(){
+        GL30.glDeleteTextures(textureId);
+    }
+
+    public int loadTexture(String fileName) {
         BufferedImage image;
         try {
-            image = ImageIO.read(new File(Objects.requireNonNull(TextureLoader.class.getClassLoader().getResource(fileName)).toURI()));
+            image = ImageIO.read(new File(Objects.requireNonNull(Texture.class.getClassLoader().getResource(fileName)).toURI()));
         } catch (Exception e) {
             e.fillInStackTrace();
             return 0;
@@ -55,4 +74,6 @@ public class TextureLoader {
 
         return textureID;
     }
+
+
 }

@@ -1,6 +1,5 @@
 package engine.object;
 
-import engine.tick.Tickable;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,7 +10,7 @@ import org.joml.Vector3f;
 @Setter
 @Getter
 @SuperBuilder
-public class Light extends EObject implements Tickable {
+public class Light extends EObject{
     @Builder.Default private Vector3f color = new Vector3f(1.0f);
     @Builder.Default private Vector3f ambient = new Vector3f(1f);
     @Builder.Default private Vector3f diffuse = new Vector3f(1f);
