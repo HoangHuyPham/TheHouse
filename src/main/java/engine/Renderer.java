@@ -1,7 +1,6 @@
 package engine;
 
 import engine.constant.Shaders;
-import engine.constant.Textures;
 import engine.lifecycle.Mesh;
 import engine.lifecycle.Shader;
 import engine.object.*;
@@ -66,7 +65,7 @@ public class Renderer {
         }
 
         if (mesh.getIndices() != null) {
-            bindIndices(mesh.getIbo());
+            GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, mesh.getIbo());
             GL11.glDrawElements(GL11.GL_TRIANGLES, mesh.getIndices().length, GL11.GL_UNSIGNED_INT, 0);
         }else
             GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, 36);
@@ -77,7 +76,6 @@ public class Renderer {
     private static void bindMesh(Mesh mesh) {
         GL30.glBindVertexArray(mesh.getVao());
         enableVAO();
-        bindIndices(mesh.getIbo());
     }
 
     private static void unbindMesh() {
@@ -88,10 +86,6 @@ public class Renderer {
         GL30.glDisableVertexAttribArray(0);
         GL30.glBindVertexArray(0);
         GL30.glBindTexture(GL11.GL_TEXTURE_2D, 0);
-    }
-
-    private static void bindIndices(int indice) {
-        GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, indice);
     }
 
     private static void enableVAO() {
