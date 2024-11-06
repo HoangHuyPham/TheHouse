@@ -1,14 +1,7 @@
 package utils.file;
-
-import engine.object.Obj;
-import engine.object.Vertex;
-import org.joml.Vector3f;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 public class File {
 
@@ -30,34 +23,5 @@ public class File {
             e.fillInStackTrace();
         }
         return "";
-    }
-
-    public static Obj getObj(String filename, boolean hasUVCoord){
-        List<Vertex> vertices = new ArrayList<>();
-        List<Integer> faces = new ArrayList<>();
-
-        String data = readAllLines(filename);
-        for(String line : data.split("\n")){
-            String[] parts = line.split(" ");
-            switch (parts[0]){
-                case "v"->{
-                    vertices.add(Vertex.builder().position(new Vector3f(Float.parseFloat(parts[1]), Float.parseFloat(parts[2]), Float.parseFloat(parts[3]))).build());
-                }
-                case "f"->{
-                    for (int i=1; i<parts.length; i++){
-                        int value;
-                        if (hasUVCoord){
-                            value = Integer.parseInt(parts[i].split("/")[0].trim());
-                        }else{
-                            value = Integer.parseInt(parts[i].trim());
-                        }
-                        // Sub -1 for format of OpenGL
-                        faces.add(value-1);
-                    }
-                }
-            }
-        }
-
-        return Obj.create(vertices.toArray(new Vertex[0]), null, null, faces.toArray(new Integer[0]));
     }
 }

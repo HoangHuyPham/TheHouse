@@ -35,6 +35,10 @@ public class Shader implements ELifeCycle {
         GL30.glUniform3f(GL30.glGetUniformLocation(this.program, name), value.x, value.y, value.z);
     }
 
+    public void use(){
+        GL30.glUseProgram(program);
+    }
+
     public void setUniform(String name, Matrix4f value){
         FloatBuffer buffer = MemoryUtil.memAllocFloat(4*4);
         float[] data = new float[4*4];

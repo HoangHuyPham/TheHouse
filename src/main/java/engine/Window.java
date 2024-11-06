@@ -55,7 +55,6 @@ public class Window {
     void update(){
         glfwPollEvents();
         GL20.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-        GL20.glClearColor(0.533f, 0.988f, 0.929f, 0f);
         GL20.glLoadIdentity();
     }
 

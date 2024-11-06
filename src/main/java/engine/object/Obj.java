@@ -1,55 +1,56 @@
 package engine.object;
 
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NonNull;
+import org.joml.Vector2f;
+import org.joml.Vector3f;
+
+import java.nio.IntBuffer;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
+@Builder
+@Getter
 public class Obj {
-    Vertex[] vertices;
-    Vertex[] normals;
-    Vertex[] texCoords;
-    Integer[] faces;
+    @NonNull
+    private Vector3f[] positions;
+    private Vector3f[] normals;
+    private Vector2f[] texCoords;
+    private IntBuffer indices;
 
-    private Obj(Vertex[] vertices, Vertex[] normals, Vertex[] texCoords, Integer[] faces) {
-        this.vertices = vertices;
-        this.normals = normals;
-        this.texCoords = texCoords;
-        this.faces = faces;
-    }
-
-    public static Obj create(Vertex[] vertices, Vertex[] normals, Vertex[] texCoords, Integer[] faces) {
-        return new Obj(vertices, normals, texCoords, faces);
-    }
-
-    public Vertex[] getVertices() {
-        return vertices;
-    }
-
-    public Vertex[] getNormals() {
-        return normals;
-    }
-
-    public Vertex[] getTexCoords() {
-        return texCoords;
-    }
-
-    public Integer[] getFaces() {
-        return faces;
+    public Vertex[] getVertexArray(){
+        List<Vertex> vertices = new ArrayList<>();
+        for (int i = 0; i < positions.length; i++) {
+            Vertex v = Vertex.builder().position(positions[i]).build();
+            if (normals != null && normals.length > 0){
+                v.setNormal(normals[i]);
+            }
+            if (texCoords != null && texCoords.length > 0){
+                v.setTexture(texCoords[i]);
+            }
+            vertices.add(v);
+        }
+        return vertices.toArray(new Vertex[0]);
     }
 
     public int[] getIndices() {
-        int[] indices = new int[faces.length];
-        for (int i = 0; i < faces.length; i++) {
-            indices[i] = faces[i];
+        System.out.println(indices.limit());
+        int[] res = new int[indices.limit()];
+        for (int i = 0; i < indices.limit(); i++) {
+            res[i] = indices.get(i);
         }
-        return indices;
+        return res;
     }
 
     @Override
     public String toString() {
         return "Obj{" +
-                "vertices=" + Arrays.toString(vertices) +
+                "position=" + Arrays.toString(positions) +
                 ", normals=" + Arrays.toString(normals) +
                 ", texCoords=" + Arrays.toString(texCoords) +
-                ", faces=" + Arrays.toString(faces) +
+                ", indices=" + Arrays.toString(getIndices()) +
                 '}';
     }
 }

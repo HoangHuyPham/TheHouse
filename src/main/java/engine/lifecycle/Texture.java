@@ -21,7 +21,7 @@ public class Texture implements ELifeCycle {
     @Override
     public void create(){
         textureId = loadTexture(this.filename);
-        System.out.println("Texture created: " + filename);
+        System.out.println("Texture created: " + textureId + (filename == null ? "" : " (" + filename + ")"));
     }
 
     @Override
