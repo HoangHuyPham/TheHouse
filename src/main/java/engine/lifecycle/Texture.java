@@ -12,7 +12,7 @@ import java.util.Objects;
 @Getter
 public class Texture implements ELifeCycle {
     private final String filename;
-    private int textureId;
+    private int id;
 
     public Texture(String fileName){
         this.filename = fileName;
@@ -20,13 +20,13 @@ public class Texture implements ELifeCycle {
 
     @Override
     public void create(){
-        textureId = loadTexture(this.filename);
-        System.out.println("Texture created: " + textureId + (filename == null ? "" : " (" + filename + ")"));
+        id = loadTexture(this.filename);
+        System.out.println("Texture created: " + id + (filename == null ? "" : " (" + filename + ")"));
     }
 
     @Override
     public void destroy(){
-        GL30.glDeleteTextures(textureId);
+        GL30.glDeleteTextures(id);
     }
 
     public int loadTexture(String fileName) {
@@ -71,9 +71,30 @@ public class Texture implements ELifeCycle {
         GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, width, height, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
         GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
-
         return textureID;
     }
 
+    public static int generateEmptyColorTexture(int width, int height) {
+        int textureID = GL11.glGenTextures();
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_REPEAT);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_REPEAT);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
+        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, width, height, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, 0);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+        return textureID;
+    }
 
+    public static int generateEmptyDepthStencilTexture(int width, int height) {
+        int textureID = GL11.glGenTextures();
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureID);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_REPEAT);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_REPEAT);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
+        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL30.GL_DEPTH24_STENCIL8, width, height, 0, GL30.GL_DEPTH_STENCIL, GL30.GL_UNSIGNED_INT_24_8, 0);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+        return textureID;
+    }
 }

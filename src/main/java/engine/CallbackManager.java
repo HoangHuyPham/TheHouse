@@ -1,5 +1,6 @@
 package engine;
 
+import engine.camera.ECamera;
 import lombok.Builder;
 import org.lwjgl.glfw.*;
 
@@ -9,6 +10,13 @@ import static org.lwjgl.glfw.GLFW.*;
 public class CallbackManager {
     private Window window;
     private ECamera camera;
+
+    private void updateCamera(){
+        camera.setShouldViewUpdate(true);
+        if (camera.getFlyCamera() != null){
+            camera.getFlyCamera().setShouldViewUpdate(true);
+        }
+    }
 
     public void create() {
         GLFWErrorCallback.createPrint(System.err).set();
@@ -40,32 +48,32 @@ public class CallbackManager {
 
                     case GLFW_KEY_W -> {
                         camera.moveUp();
-                        camera.setShouldViewUpdate(true);
+                        updateCamera();
                     }
 
                     case GLFW_KEY_S -> {
                         camera.moveDown();
-                        camera.setShouldViewUpdate(true);
+                        updateCamera();
                     }
 
                     case GLFW_KEY_D -> {
                         camera.moveRight();
-                        camera.setShouldViewUpdate(true);
+                        updateCamera();
                     }
 
                     case GLFW_KEY_A -> {
                         camera.moveLeft();
-                        camera.setShouldViewUpdate(true);
+                        updateCamera();
                     }
 
                     case GLFW_KEY_SPACE -> {
                         camera.flyUp();
-                        camera.setShouldViewUpdate(true);
+                        updateCamera();
                     }
 
                     case GLFW_KEY_LEFT_SHIFT -> {
                         camera.flyDown();
-                        camera.setShouldViewUpdate(true);
+                        updateCamera();
                     }
                 }
         }).set(window.getWindowId());

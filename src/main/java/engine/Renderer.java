@@ -1,9 +1,12 @@
 package engine;
 
+import engine.camera.ECamera;
 import engine.constant.Shaders;
+import engine.lifecycle.FrameBuffer;
 import engine.lifecycle.Mesh;
 import engine.lifecycle.Shader;
 import engine.object.*;
+import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL30;
@@ -24,17 +27,43 @@ public class Renderer {
         camera.setZfar(ECamera.DEFAULT_ZFAR);
         camera.setShouldProjectionUpdate(true);
 
-        GL11.glDrawElements(GL11.GL_TRIANGLES, mesh.getIndices().length, GL11.GL_UNSIGNED_INT, 0);
+        if (mesh.getIndices() != null) {
+            GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, mesh.getIbo());
+            GL11.glDrawElements(GL11.GL_TRIANGLES, mesh.getIndices().length, GL11.GL_UNSIGNED_INT, 0);
+        }
+
+        unbindMesh();
+    }
+
+    public static void renderScreen(Screen screen, FrameBuffer data) {
+        if (data == null)
+            return;
+
+        Shader shader = Shaders.MINIMAP_SHADER;;
+        Mesh mesh = screen.getMesh();
+        bindMesh(mesh);
+        shader.use();
+        shader.setUniform("model", screen.getModelMatrix());
+
+        if (screen.getTexture() != null){
+            shader.setUniform("texture0", 0);
+            GL30.glActiveTexture(GL30.GL_TEXTURE0);
+            GL30.glBindTexture(GL11.GL_TEXTURE_2D, data.getColorTexture());
+        }
+
+        if (mesh.getIndices() != null) {
+            GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, mesh.getIbo());
+            GL11.glDrawElements(GL11.GL_TRIANGLES, mesh.getIndices().length, GL11.GL_UNSIGNED_INT, 0);
+        }
 
         unbindMesh();
     }
 
     public static void renderBasic(BasicObject object, ECamera camera, Light light) {
-        Shader shader;
+        Shader shader = Shaders.CORE_SHADER;;
         Mesh mesh = object.getMesh();
         bindMesh(mesh);
 
-        shader = Shaders.CORE_SHADER;
         shader.use();
         shader.setUniform("material.ambient", object.getMaterial().getAmbient());
         shader.setUniform("material.diffuse", object.getMaterial().getDiffuse());
@@ -61,14 +90,13 @@ public class Renderer {
         if (object.getMaterial().getTexture() != null){
             shader.setUniform("texture0", 0);
             GL30.glActiveTexture(GL30.GL_TEXTURE0);
-            GL30.glBindTexture(GL11.GL_TEXTURE_2D, object.getMaterial().getTexture().getTextureId());
+            GL30.glBindTexture(GL11.GL_TEXTURE_2D, object.getMaterial().getTexture().getId());
         }
 
         if (mesh.getIndices() != null) {
             GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, mesh.getIbo());
             GL11.glDrawElements(GL11.GL_TRIANGLES, mesh.getIndices().length, GL11.GL_UNSIGNED_INT, 0);
-        }else
-            GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, 36);
+        }
 
         unbindMesh();
     }

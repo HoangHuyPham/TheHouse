@@ -1,5 +1,7 @@
 package engine.lifecycle;
 
+import lombok.Builder;
+import lombok.Getter;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -10,14 +12,12 @@ import utils.file.File;
 
 import java.nio.FloatBuffer;
 
+@Builder
+@Getter
 public class Shader implements ELifeCycle {
-    public String vertexShaderSource;
-    public String fragmentShaderSource;
-    public int program, vertexShader, fragmentShader;
-    public Shader(String vertexShaderSource, String fragmentShaderSource) {
-        this.vertexShaderSource = vertexShaderSource;
-        this.fragmentShaderSource = fragmentShaderSource;
-    }
+    private String vertexShaderSource;
+    private String fragmentShaderSource;
+    private int program, vertexShader, fragmentShader;
 
     public void setUniform(String name, int value){
         GL30.glUniform1i(GL30.glGetUniformLocation(this.program, name), value);

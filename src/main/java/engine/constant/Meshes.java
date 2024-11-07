@@ -94,6 +94,7 @@ public class Meshes {
     public static final Mesh LAND_FROM_OBJ = Mesh.parseMesh(AssimpSupport.loadObj("obj/land.obj"));
     public static final Mesh MOUNTAIN_FROM_OBJ = Mesh.parseMesh(AssimpSupport.loadObj("obj/mountain.obj"));
     public static final Mesh HOUSE_FROM_OBJ = Mesh.parseMesh(AssimpSupport.loadObj("obj/house.obj"));
+    public static final Mesh SCREEN_FROM_OBJ = Mesh.parseMesh(AssimpSupport.loadObj("obj/screen.obj"));
 
     public static void create(){
         BOX_NO_INDICES.create();
@@ -103,6 +104,7 @@ public class Meshes {
         LAND_FROM_OBJ.create();
         MOUNTAIN_FROM_OBJ.create();
         HOUSE_FROM_OBJ.create();
+        SCREEN_FROM_OBJ.create();
     }
 
     public static void destroyAll(){
@@ -112,6 +114,7 @@ public class Meshes {
         SPHRERE_FROM_OBJ.destroy();
         LAND_FROM_OBJ.destroy();
         MOUNTAIN_FROM_OBJ.destroy();
-        HOUSE_FROM_OBJ.create();
+        HOUSE_FROM_OBJ.destroy();
+        SCREEN_FROM_OBJ.destroy();
     }
 }

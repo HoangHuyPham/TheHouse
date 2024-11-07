@@ -16,7 +16,7 @@ public abstract class EObject implements Tickable {
     @Builder.Default private Vector3f scale = new Vector3f(1.0f, 1.0f, 1.0f);
     @Builder.Default private Matrix4f matrix = new Matrix4f().identity();
     @Builder.Default private boolean shouldUpdate = true;
-    private Mesh mesh;
+    @NonNull private Mesh mesh;
 
     /**
      * If {@systemProperty shouldUpdate} is not set to {@code true} before call {@code getModelMatrix()}, it will return cache Matrix
