@@ -36,7 +36,6 @@ public class Obj {
     }
 
     public int[] getIndices() {
-        System.out.println(indices.limit());
         int[] res = new int[indices.limit()];
         for (int i = 0; i < indices.limit(); i++) {
             res[i] = indices.get(i);

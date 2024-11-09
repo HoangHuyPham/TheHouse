@@ -2,7 +2,6 @@ package engine;
 
 import lombok.*;
 import org.lwjgl.opengl.GL;
-import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
@@ -64,8 +63,18 @@ public class Window {
         glfwTerminate();
     }
 
+    void reshape(long id, int width, int height){
+        this.width = width;
+        this.height = height;
+        updateViewPort();
+    }
+
     boolean shouldClose(){
         return glfwWindowShouldClose(windowId);
+    }
+
+    public void shouldClose(boolean value){
+        glfwSetWindowShouldClose(windowId, value);
     }
 
     void showFPS(int fpsCount) {

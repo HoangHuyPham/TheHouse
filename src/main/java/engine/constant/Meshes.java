@@ -4,8 +4,9 @@ import engine.lifecycle.Mesh;
 import engine.object.Vertex;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
-import utils.file.File;
 import utils.model.AssimpSupport;
+
+import java.util.Optional;
 
 public class Meshes {
     public static final Mesh BOX_INDICES = Mesh.builder().vertices(new Vertex[]{
@@ -89,12 +90,12 @@ public class Meshes {
             Vertex.builder().position(new Vector3f(-0.5f, 0.5f, -0.5f)).normal(new Vector3f(0.0f, 1.0f, 0.0f)).texture(new Vector2f(0.0f, 1.0f)).build()
     }).build();
 
-    public static final Mesh BOX_FROM_OBJ = Mesh.parseMesh(AssimpSupport.loadObj("obj/box.obj"));
-    public static final Mesh SPHRERE_FROM_OBJ = Mesh.parseMesh(AssimpSupport.loadObj("obj/sphere.obj"));
-    public static final Mesh LAND_FROM_OBJ = Mesh.parseMesh(AssimpSupport.loadObj("obj/land.obj"));
-    public static final Mesh MOUNTAIN_FROM_OBJ = Mesh.parseMesh(AssimpSupport.loadObj("obj/mountain.obj"));
-    public static final Mesh HOUSE_FROM_OBJ = Mesh.parseMesh(AssimpSupport.loadObj("obj/house.obj"));
-    public static final Mesh SCREEN_FROM_OBJ = Mesh.parseMesh(AssimpSupport.loadObj("obj/screen.obj"));
+    public static final Mesh BOX_FROM_OBJ = Mesh.parseMesh(Optional.ofNullable(AssimpSupport.loadObj("obj/box.obj")));
+    public static final Mesh SPHRERE_FROM_OBJ = Mesh.parseMesh(Optional.ofNullable(AssimpSupport.loadObj("obj/sphere.obj")));
+    public static final Mesh LAND_FROM_OBJ = Mesh.parseMesh(Optional.ofNullable(AssimpSupport.loadObj("obj/land.obj")));
+    public static final Mesh MOUNTAIN_FROM_OBJ = Mesh.parseMesh(Optional.ofNullable(AssimpSupport.loadObj("obj/mountain.obj")));
+    public static final Mesh HOUSE_FROM_OBJ = Mesh.parseMesh(Optional.ofNullable(AssimpSupport.loadObj("obj/house.obj")));
+    public static final Mesh SCREEN_FROM_OBJ = Mesh.parseMesh(Optional.ofNullable(AssimpSupport.loadObj("obj/screen.obj")));
 
     public static void create(){
         BOX_NO_INDICES.create();

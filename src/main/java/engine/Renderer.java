@@ -1,19 +1,18 @@
 package engine;
 
-import engine.camera.ECamera;
+import engine.camera.Camera;
 import engine.constant.Shaders;
 import engine.lifecycle.FrameBuffer;
 import engine.lifecycle.Mesh;
 import engine.lifecycle.Shader;
 import engine.object.*;
-import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL30;
 
 public class Renderer {
 
-    public static void renderLight(Light light, ECamera camera){
+    public static void renderLight(Light light, Camera camera){
         Shader shader = Shaders.SIMPLE_SHADER;
         Mesh mesh = light.getMesh();
         bindMesh(mesh);
@@ -24,7 +23,7 @@ public class Renderer {
         camera.setZfar(Float.POSITIVE_INFINITY);
         camera.setShouldProjectionUpdate(true);
         shader.setUniform("projection", camera.getProjection());
-        camera.setZfar(ECamera.DEFAULT_ZFAR);
+        camera.setZfar(Camera.DEFAULT_ZFAR);
         camera.setShouldProjectionUpdate(true);
 
         if (mesh.getIndices() != null) {
@@ -59,7 +58,7 @@ public class Renderer {
         unbindMesh();
     }
 
-    public static void renderBasic(BasicObject object, ECamera camera, Light light) {
+    public static void renderBasic(BasicObject object, Camera camera, Light light) {
         Shader shader = Shaders.CORE_SHADER;;
         Mesh mesh = object.getMesh();
         bindMesh(mesh);

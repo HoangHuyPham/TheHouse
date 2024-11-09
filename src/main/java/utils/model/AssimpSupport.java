@@ -39,7 +39,6 @@ public class AssimpSupport {
             indices.put(aFaces.get(i).mIndices().get(2));
         }
         indices.flip();
-        System.out.println(indices.limit());
         return Obj.builder().positions(position).normals(normals).indices(indices).texCoords(texCoords).build();
     }
 

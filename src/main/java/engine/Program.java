@@ -1,11 +1,11 @@
 package engine;
 
-import engine.camera.ECamera;
-import engine.camera.FlyCamera;
+import engine.camera.Camera;
 import engine.constant.Materials;
 import engine.constant.Meshes;
 import engine.constant.Shaders;
 import engine.constant.Textures;
+import engine.input.CameraInput;
 import engine.lifecycle.FrameBuffer;
 import engine.object.*;
 import engine.tick.Ticker;
@@ -21,9 +21,9 @@ public class Program implements Runnable {
     long time;
     int frameCount;
     Window window = Window.builder().width(WINDOW_WIDTH).height(WINDOW_HEIGHT).title("The House").build();
-    ECamera camera = ECamera.builder().position(new Vector3f(0, 25f, 25f)).build();
-    FlyCamera flyCamera = FlyCamera.builder().pitch(-90f).build();
-    CallbackManager callbackManager = CallbackManager.builder().window(window).camera(camera).build();
+    Camera camera = Camera.builder().position(new Vector3f(0, 25f, 25f)).build();
+    CameraInput cameraInput = CameraInput.builder().camera(camera).window(window).build();
+    CallbackManager callbackManager = CallbackManager.builder().program(this).build();
     FrameBuffer minimapFB = FrameBuffer.builder().width(WINDOW_WIDTH).height(WINDOW_HEIGHT).build();
     Ticker ticker = new Ticker();
 
@@ -63,11 +63,7 @@ public class Program implements Runnable {
 
         // Set up camera
         camera.setAspect((float) window.getWidth() / window.getHeight());
-        // Set up fly camera
-        flyCamera.setAspect((float) window.getWidth() / window.getHeight());
-        flyCamera.attachTo(camera);
 
-        // Ticker register
         ticker.registerTickable(sun);
 
         // For calc FPS
@@ -82,13 +78,6 @@ public class Program implements Runnable {
     void render() {
         // Mirror render
         GL30.glEnable(GL30.GL_DEPTH_TEST);
-        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, minimapFB.getId());
-        GL30.glClear(GL30.GL_DEPTH_BUFFER_BIT | GL30.GL_COLOR_BUFFER_BIT | GL30.GL_STENCIL_BUFFER_BIT);
-        Renderer.renderLight(sun, flyCamera);
-        Renderer.renderBasic(land, flyCamera, sun);
-        Renderer.renderBasic(mountain, flyCamera, sun);
-        Renderer.renderBasic(house, flyCamera, sun);
-        Renderer.renderBasic(basicObject, flyCamera, sun);
 
         // Main render
         GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
@@ -111,9 +100,13 @@ public class Program implements Runnable {
         Vector3f ambient = sun.getCurrentAmbient();
         GL20.glClearColor(0.557f * ambient.x, 0.851f * ambient.y, 0.988f * ambient.z, 0f);
         window.update();
+
+        // handle input
+        cameraInput.handle();
     }
 
     void destroy() {
+        cameraInput.destroy();
         minimapFB.destroy();
         ticker.destroy();
         Shaders.destroyAll();
@@ -121,6 +114,32 @@ public class Program implements Runnable {
         Meshes.destroyAll();
         callbackManager.destroy();
         window.destroy();
+    }
+
+    void onReshape(long w, int width, int height){
+        window.reshape(w, width, height);
+        System.out.println("Window size has changed");
+
+        // Update camera (matrix)
+        camera.setAspect((float) width / height);
+        camera.setShouldProjectionUpdate(true);
+
+    }
+
+    void onScale(long w, double deltaX, double deltaY){
+        // Update camera (zoom)
+        float fov = camera.getFov();
+        fov -= (float) deltaY;
+
+        if (fov < 1.0f)
+            camera.setFov(1.0f);
+        else if (fov > 45.0f)
+            camera.setFov(45.0f);
+        else
+            camera.setFov(fov);
+
+        camera.setAspect((float) window.getWidth()/ window.getHeight());
+        camera.setShouldProjectionUpdate(true);
     }
 
     void catchGLError(){

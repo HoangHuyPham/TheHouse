@@ -10,23 +10,21 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 
-
 @Getter
 @Setter
 @SuperBuilder
-public class ECamera{
+public class Camera {
     public static float DEFAULT_ZFAR = Float.POSITIVE_INFINITY;
-    @Builder.Default private float fov = 45f;
-    @Builder.Default private Vector3f position = new Vector3f(0, 0, 0);
-    @Builder.Default private Vector3f forward = new Vector3f(0, 0, -1f);
-    @Builder.Default private Vector3f up = new Vector3f(0, 1, 0);
-    @Builder.Default private float pitch = 0, yaw = -180f, roll = 0;
-    @Builder.Default private float sensitivity = 0.05f, speed = 100f, aspect = 1.0f, zNear = 1.0f, zfar = DEFAULT_ZFAR;
-    @Builder.Default private Matrix4f aProjection = new Matrix4f().identity();
-    @Builder.Default private Matrix4f aView = new Matrix4f().identity();
-    @Builder.Default private boolean shouldViewUpdate = true;
-    @Builder.Default private boolean shouldProjectionUpdate = true;
-    private FlyCamera flyCamera;
+    @Builder.Default protected float fov = 45f;
+    @Builder.Default protected Vector3f position = new Vector3f(0, 0, 0);
+    @Builder.Default protected Vector3f forward = new Vector3f(0, 0, -1f);
+    @Builder.Default protected Vector3f up = new Vector3f(0, 1, 0);
+    @Builder.Default protected float pitch = 0, yaw = -180f, roll = 0;
+    @Builder.Default protected float sensitivity = 0.05f, speed = 100f, aspect = 1.0f, zNear = 1.0f, zfar = DEFAULT_ZFAR;
+    @Builder.Default protected Matrix4f aProjection = new Matrix4f().identity();
+    @Builder.Default protected Matrix4f aView = new Matrix4f().identity();
+    @Builder.Default protected boolean shouldViewUpdate = true;
+    @Builder.Default protected boolean shouldProjectionUpdate = true;
 
     @Builder.Default private final Object lockView = new Object(), lockProjection = new Object();
 
@@ -68,25 +66,12 @@ public class ECamera{
         setPitch(getPitch() + yOffset * this.sensitivity);
         setYaw(getYaw() + xOffset * this.sensitivity);
 
-        if (flyCamera != null){
-            if(getPitch() >= 89.0f)
-                flyCamera.setPitch(89.0f);
-            else
-                flyCamera.setPitch(getPitch() + yOffset * this.sensitivity);
-
-            if(getPitch() < -89.0f)
-                flyCamera.setPitch(-89.0f);
-            else
-                flyCamera.setPitch(getPitch() + yOffset * this.sensitivity);
-        }
-
         // Limit euler angle
         if(getPitch() >= 89.0f)
             setPitch(89.0f);
         if(getPitch() < -89.0f)
             setPitch(-89.0f);
 
-        flyCamera.updateDirection();
         updateDirection();
     }
 
@@ -120,10 +105,5 @@ public class ECamera{
         direction.y = Math.sin(Math.toRadians(getPitch()));
         direction.z = Math.sin(Math.toRadians(getYaw())) * Math.cos(Math.toRadians(getPitch()));
         setForward(direction.normalize());
-    }
-
-    public void attach(FlyCamera flyCamera){
-        this.flyCamera = flyCamera;
-        flyCamera.setPosition(this.getPosition());
     }
 }
