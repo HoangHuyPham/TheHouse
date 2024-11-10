@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.joml.Math;
 import org.joml.Vector3f;
+import org.lwjgl.opengl.GL20;
 
 @SuperBuilder
 @Setter
@@ -24,7 +25,8 @@ public class Sun extends Light{
         ambient.mul(ambientIntensity, currentAmbient);
         setPosition(new Vector3f(sunX, sunY, 0).mul(sunZ));
         setShouldUpdate(true);
-        if (tickTime % 2 ==0)
-            angleXY = angleXY + 1 % 360;
+
+//        if (tickTime % 2 ==0)
+//            angleXY = angleXY + 1 % 360;
     }
 }

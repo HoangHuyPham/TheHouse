@@ -11,9 +11,9 @@ import org.joml.Vector3f;
 @Getter
 @Setter
 public abstract class EObject implements Tickable {
-    private Vector3f position;
-    @Builder.Default private Vector3f rotation = new Vector3f(0f, 0f, 0f);
-    @Builder.Default private Vector3f scale = new Vector3f(1.0f, 1.0f, 1.0f);
+    @Builder.Default protected Vector3f position = new Vector3f();
+    @Builder.Default private Vector3f rotation = new Vector3f();
+    @Builder.Default private Vector3f scale = new Vector3f(1f);
     @Builder.Default private Matrix4f matrix = new Matrix4f().identity();
     @Builder.Default private boolean shouldUpdate = true;
     private Mesh mesh;

@@ -2,8 +2,8 @@ package engine;
 
 import lombok.*;
 import org.lwjgl.opengl.GL;
-import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GL30;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.system.MemoryUtil.*;
@@ -54,7 +54,7 @@ public class Window {
 
     void update(){
         glfwPollEvents();
-        GL20.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+        GL30.glClear(GL30.GL_DEPTH_BUFFER_BIT | GL30.GL_COLOR_BUFFER_BIT | GL30.GL_STENCIL_BUFFER_BIT);
         GL20.glLoadIdentity();
     }
 
@@ -63,8 +63,18 @@ public class Window {
         glfwTerminate();
     }
 
+    void reshape(long id, int width, int height){
+        this.width = width;
+        this.height = height;
+        updateViewPort();
+    }
+
     boolean shouldClose(){
         return glfwWindowShouldClose(windowId);
+    }
+
+    public void shouldClose(boolean value){
+        glfwSetWindowShouldClose(windowId, value);
     }
 
     void showFPS(int fpsCount) {
