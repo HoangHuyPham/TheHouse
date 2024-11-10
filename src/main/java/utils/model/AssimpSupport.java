@@ -11,7 +11,7 @@ import java.nio.IntBuffer;
 public class AssimpSupport {
     public static Obj loadObj(String filename) {
 
-        AIScene scene = Assimp.aiImportFile(AssimpSupport.class.getClassLoader().getResource(filename).getFile().substring(1), Assimp.aiProcess_Triangulate | Assimp.aiProcess_JoinIdenticalVertices);
+        AIScene scene = Assimp.aiImportFile(AssimpSupport.class.getClassLoader().getResource(filename).getFile().substring(1), Assimp.aiProcess_Triangulate | Assimp.aiProcess_JoinIdenticalVertices | Assimp.aiProcess_FlipUVs);
         if (scene == null) {
             return null;
         }
