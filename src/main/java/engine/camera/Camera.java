@@ -13,66 +13,32 @@ import org.joml.Vector3f;
 @Getter
 @Setter
 @SuperBuilder
-public class Camera {
-    public static float DEFAULT_ZFAR = Float.POSITIVE_INFINITY;
+public class Camera extends AbstractCamera{
+    public static final float DEFAULT_Z_FAR = 200f;
     @Builder.Default protected float fov = 45f;
-    @Builder.Default protected Vector3f position = new Vector3f(0, 0, 0);
-    @Builder.Default protected Vector3f forward = new Vector3f(0, 0, -1f);
-    @Builder.Default protected Vector3f up = new Vector3f(0, 1, 0);
-    @Builder.Default protected float pitch = 0, yaw = -180f, roll = 0;
-    @Builder.Default protected float sensitivity = 0.05f, speed = 100f, aspect = 1.0f, zNear = 1.0f, zfar = DEFAULT_ZFAR;
-    @Builder.Default protected Matrix4f aProjection = new Matrix4f().identity();
-    @Builder.Default protected Matrix4f aView = new Matrix4f().identity();
-    @Builder.Default protected boolean shouldViewUpdate = true;
-    @Builder.Default protected boolean shouldProjectionUpdate = true;
+    @Builder.Default protected float sensitivity = 0.05f, speed = 100f, aspect = 1.0f;
 
-    @Builder.Default private final Object lockView = new Object(), lockProjection = new Object();
-
-    /**
-     * If {@systemProperty shouldViewUpdate} is not set to {@code true} before call {@code getView()}, it will return cache Matrix
-     * @return {@link Matrix4f}
-     */
-    public Matrix4f getView(){
+    @Override
+    public Matrix4f getViewMatrix() {
         if (shouldViewUpdate){
             synchronized (lockView){
                 updateDirection();
-                aView.identity().lookAt(position, position.add(forward, new Vector3f()), up);
+                view.setLookAt(position, position.add(forward, new Vector3f()), up);
                 shouldViewUpdate = false;
             }
         }
-        return aView;
+        return view;
     }
 
-    /**
-     * If {@systemProperty shouldProjectionUpdate} is not set to {@code true} before call {@code getProjection()}, it will return cache Matrix
-     * @return {@link Matrix4f}
-     */
-    public Matrix4f getProjection(){
+    @Override
+    public Matrix4f getProjectionMatrix() {
         if (shouldProjectionUpdate){
             synchronized (lockProjection){
-              aProjection.identity().perspective(Math.toRadians(fov), aspect, zNear, zfar);
+                projection.setPerspective(Math.toRadians(fov), aspect, zNear, zFar);
                 shouldProjectionUpdate = false;
             }
         }
-        return aProjection;
-    }
-
-    /**
-     * Update {@systemProperty forward} follow current x, y offset mouse
-     * @param xOffset
-     * @param yOffset
-     */
-    public void updateForwardByPointer(float xOffset, float yOffset){
-        setPitch(getPitch() + yOffset * this.sensitivity);
-        setYaw(getYaw() + xOffset * this.sensitivity);
-
-        // Limit euler angle
-        if(getPitch() >= 89.0f)
-            setPitch(89.0f);
-        if(getPitch() < -89.0f)
-            setPitch(-89.0f);
-
-        updateDirection();
+        return projection;
     }
 
     public void flyUp(){
@@ -104,6 +70,9 @@ public class Camera {
         direction.x = Math.cos(Math.toRadians(getYaw())) * Math.cos(Math.toRadians(getPitch()));
         direction.y = Math.sin(Math.toRadians(getPitch()));
         direction.z = Math.sin(Math.toRadians(getYaw())) * Math.cos(Math.toRadians(getPitch()));
-        setForward(direction.normalize());
+        this.forward = direction.normalize();
     }
+
+    @Override
+    public void onTick() {}
 }

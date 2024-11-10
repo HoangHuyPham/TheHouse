@@ -24,19 +24,28 @@ public class CameraInput extends Input {
 
     private void rotation(){
         glfwGetCursorPos(window.getWindowId(), xPos, yPos);
-        float xoffset = (float) xPos.get(0) - window.getLastX();
-        float yoffset = window.getLastY() - (float) yPos.get(0);
+        float xOffset = (float) xPos.get(0) - window.getLastX();
+        float yOffset = window.getLastY() - (float) yPos.get(0);
 
         if (window.isFirstCursor()){
             window.setFirstCursor(false);
-            xoffset = 0;
-            yoffset = 0;
+            xOffset = 0;
+            yOffset = 0;
         }
 
         window.setLastX((float) xPos.get(0));
         window.setLastY((float) yPos.get(0));
 
-        camera.updateForwardByPointer(xoffset, yoffset);
+        camera.setPitch((camera.getPitch() + yOffset * camera.getSensitivity()) % 360);
+        camera.setYaw((camera.getYaw() + xOffset * camera.getSensitivity()) % 360);
+
+        // Limit euler angle
+        if(camera.getPitch() >= 89.0f)
+            camera.setPitch(89.0f);
+        if(camera.getPitch() < -89.0f)
+            camera.setPitch(-89.0f);
+        camera.updateDirection();
+
         updateCamera();
     }
 
