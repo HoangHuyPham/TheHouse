@@ -8,7 +8,6 @@ import org.lwjgl.opengl.*;
 import org.lwjgl.system.MemoryUtil;
 
 import java.nio.FloatBuffer;
-import java.util.Optional;
 
 @Getter
 @Builder
@@ -17,8 +16,9 @@ public class Mesh implements ELifeCycle {
     final private int[] indices;
     private int vao, vbo, ibo;
 
-    public static Mesh parseMesh(Optional<Obj> obj){
-        return obj.map(value -> Mesh.builder().vertices(value.getVertexArray()).indices(value.getIndices()).build()).orElse(null);
+    public static Mesh parseMesh(Obj obj){
+        if (obj == null) return null;
+        return Mesh.builder().vertices(obj.getVertexArray()).indices(obj.getIndices()).build();
     }
 
     @Override

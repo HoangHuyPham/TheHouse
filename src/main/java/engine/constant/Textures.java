@@ -10,6 +10,7 @@ public class Textures {
     public static final Texture DIRT = new Texture("texture/dirt.png");
     public static final Texture HOUSE = new Texture("texture/house.png");
     public static final Texture CAMERA = new Texture("texture/camera.png");
+    public static final Texture SUN = new Texture("texture/sun.png");
 
     public static void create(){
         WALL.create();
@@ -19,6 +20,7 @@ public class Textures {
         DIRT.create();
         HOUSE.create();
         CAMERA.create();
+        SUN.create();
     }
 
     public static void destroyAll(){
@@ -29,5 +31,6 @@ public class Textures {
         DIRT.destroy();
         HOUSE.destroy();
         CAMERA.destroy();
+        SUN.destroy();
     }
 }

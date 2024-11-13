@@ -1,32 +1,33 @@
 package engine.object;
 
+import engine.lighting.DirectionalLight;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.joml.Math;
 import org.joml.Vector3f;
-import org.lwjgl.opengl.GL20;
 
 @SuperBuilder
 @Setter
 @Getter
-public class Sun extends Light{
+public class Sun extends BasicObject  {
+    @Builder.Default
+    DirectionalLight sunLight = DirectionalLight.builder().build();
     @Builder.Default private float angleXY = 90;
-    @Builder.Default private Vector3f currentAmbient = new Vector3f();
     long tickTime;
     @Override
     public void onTick() {
         tickTime++;
-        float ambientIntensity = Math.max(Math.sin(Math.toRadians(angleXY)), 0.5f);
         float sunX = Math.cos(Math.toRadians(angleXY));
         float sunY = Math.sin(Math.toRadians(angleXY));
         float sunZ = 999999f;
-        ambient.mul(ambientIntensity, currentAmbient);
         setPosition(new Vector3f(sunX, sunY, 0).mul(sunZ));
         setShouldUpdate(true);
+        sunLight.setPosition(new Vector3f(sunX, sunY, 0).mul(sunZ));
+        sunLight.setShouldUpdate(true);
 
-//        if (tickTime % 2 ==0)
-//            angleXY = angleXY + 1 % 360;
+        if (tickTime % 2 ==0)
+            angleXY = angleXY + 1 % 360;
     }
 }

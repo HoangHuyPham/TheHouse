@@ -8,6 +8,9 @@ import engine.constant.Shaders;
 import engine.constant.Textures;
 import engine.input.CameraInput;
 import engine.lifecycle.FrameBuffer;
+import engine.lighting.Lighting;
+import engine.lighting.PointLight;
+import engine.lighting.SpotLight;
 import engine.object.*;
 import engine.tick.Ticker;
 import lombok.Getter;
@@ -26,7 +29,7 @@ public class Program implements Runnable {
     Window window = Window.builder().width(WINDOW_WIDTH).height(WINDOW_HEIGHT).title("The House").build();
     Camera camera = Camera.builder().position(new Vector3f(0, 25f, 25f)).build();
     CameraInput cameraInput = CameraInput.builder().camera(camera).window(window).build();
-    CameraMap cameraMap = CameraMap.builder().zFar(2000f).zNear(0.1f).followOject(Optional.ofNullable(camera)).build();
+    CameraMap cameraMap = CameraMap.builder().zFar(2000f).zNear(0.1f).followOject(camera).build();
     CallbackManager callbackManager = CallbackManager.builder().program(this).build();
     FrameBuffer minimapFB = FrameBuffer.builder().width(WINDOW_WIDTH).height(WINDOW_HEIGHT).build();
     Ticker ticker = new Ticker();
@@ -35,8 +38,12 @@ public class Program implements Runnable {
     BasicObject land = BasicObject.builder().scale(new Vector3f(6f,1f,6f)).material(Materials.GRASS).position(new Vector3f(0f, -0.0025f, 0f)).mesh(Meshes.LAND_FROM_OBJ).build();
     BasicObject mountain = BasicObject.builder().material(Materials.DIRT).position(new Vector3f(-200f, -5f, 0f)).scale(new Vector3f(100f,200f,300f)).mesh(Meshes.MOUNTAIN_FROM_OBJ).build();
     BasicObject house = BasicObject.builder().material(Material.builder().texture(Textures.HOUSE).build()).position(new Vector3f(0, 0f, 100f)).rotation(new Vector3f(0,90,0)).scale(new Vector3f(5,3,5)).mesh(Meshes.HOUSE_FROM_OBJ).build();
-    Sun sun = Sun.builder().disPlayColor(new Vector3f(1,0.8f,0)).position(new Vector3f(0f, 0f, 0f)).scale(new Vector3f(100000f, 100000f, 100000f)).mesh(Meshes.SPHRERE_FROM_OBJ).build();
+    Sun sun = Sun.builder().zLimit(false).material(Materials.SUN).position(new Vector3f(0f, 0f, 0f)).scale(new Vector3f(50_000f, 50_000f, 50_000f)).mesh(Meshes.SUN_FROM_OBJ).build();
     Screen screen = Screen.builder().scale(new Vector3f(1f * WINDOW_HEIGHT/WINDOW_WIDTH,1f,0)).position(new Vector3f(-1f,1,0)).mesh(Meshes.SCREEN_FROM_OBJ).build();
+
+    Lamp lamp =
+            Lamp.builder().material(null).position(new Vector3f(0,10,0)).spotLight(SpotLight.builder().isActive(true).position(new Vector3f(0,20,0)).forward(new Vector3f(0, -1,0)).build()).pointLight(PointLight.builder().isActive(true).position(new Vector3f(0,20,0)).build()).mesh(Meshes.SUN_FROM_OBJ).build();
+
 
     @Override
     public void run() {
@@ -70,6 +77,11 @@ public class Program implements Runnable {
 
         ticker.registerTickable(sun);
 
+        // Set up lighting
+        Lighting.DIRECTIONAL_LIGHT = sun.getSunLight();
+        Lighting.POINT_LIGHTS.add(lamp.getPointLight());
+        Lighting.SPOT_LIGHTS.add(lamp.getSpotLight());
+
         // For calc FPS
         time = System.currentTimeMillis();
     }
@@ -83,10 +95,11 @@ public class Program implements Runnable {
         GL30.glEnable(GL30.GL_DEPTH_TEST);
         // Main render
         Renderer.renderLight(sun, camera);
-        Renderer.renderBasic(land, camera, sun);
-        Renderer.renderBasic(mountain, camera, sun);
-        Renderer.renderBasic(house, camera, sun);
-        Renderer.renderBasic(basicObject, camera, sun);
+        Renderer.renderBasic(land, camera);
+        Renderer.renderBasic(mountain, camera);
+        Renderer.renderBasic(house, camera);
+        Renderer.renderBasic(basicObject, camera);
+        Renderer.renderLight(lamp, camera);
 
         // Mirror render
         GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, minimapFB.getId());
@@ -94,10 +107,11 @@ public class Program implements Runnable {
         GL30.glClear(GL30.GL_DEPTH_BUFFER_BIT | GL30.GL_COLOR_BUFFER_BIT | GL30.GL_STENCIL_BUFFER_BIT);
 
         Renderer.renderLight(sun, cameraMap);
-        Renderer.renderBasic(land, cameraMap, sun);
-        Renderer.renderBasic(mountain, cameraMap, sun);
-        Renderer.renderBasic(house, cameraMap, sun);
-        Renderer.renderBasic(basicObject, cameraMap, sun);
+        Renderer.renderBasic(land, cameraMap);
+        Renderer.renderBasic(mountain, cameraMap);
+        Renderer.renderBasic(house, cameraMap);
+        Renderer.renderBasic(basicObject, cameraMap);
+        Renderer.renderLight(lamp, cameraMap);
         GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
 
         // Show on mini screen
@@ -111,8 +125,6 @@ public class Program implements Runnable {
     }
 
     void update() {
-        Vector3f ambient = sun.getCurrentAmbient();
-        GL20.glClearColor(0.557f * ambient.x, 0.851f * ambient.y, 0.988f * ambient.z, 0f);
         window.update();
 
         // handle input
