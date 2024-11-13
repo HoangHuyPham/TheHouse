@@ -31,6 +31,7 @@ public class Materials {
     public static final Material YELLOW_RUBBER = Material.builder().ambient(new Vector3f(0.05f, 0.05f, 0.0f)).diffuse(new Vector3f(0.5f, 0.5f, 0.4f)).specular(new Vector3f(0.7f, 0.7f, 0.04f)).shininess(0.078125f).build();
     public static final Material DIRT = Material.builder().ambient(new Vector3f(0.1f, 0.1f, 0.1f)).diffuse(new Vector3f(0.5f, 0.5f, 0.4f)).specular(new Vector3f(0.04f, 0.04f, 0.04f)).shininess(0.001f).texture(Textures.DIRT).build();
     public static final Material GRASS = Material.builder().ambient(new Vector3f(0.1f, 0.1f, 0.1f)).diffuse(new Vector3f(0.5f, 0.5f, 0.4f)).specular(new Vector3f(0.04f, 0.04f, 0.04f)).shininess(0.001f).texture(Textures.GRASS).build();
+    public static final Material SUN = Material.builder().texture(Textures.SUN).ambient(new Vector3f(0.0f, 0.0f, 0.0f)).diffuse(new Vector3f(1f, 1f, 1f)).specular(new Vector3f(1f, 1f, 1f)).shininess(1f).build();
 
 
 }

@@ -23,6 +23,10 @@ public class Shader implements ELifeCycle {
         GL30.glUniform1i(GL30.glGetUniformLocation(this.program, name), value);
     }
 
+    public void setUniform(String name, boolean value){
+        GL30.glUniform1i(GL30.glGetUniformLocation(this.program, name), value?1:0);
+    }
+
     public void setUniform(String name, float value){
         GL30.glUniform1f(GL30.glGetUniformLocation(this.program, name), value);
     }
@@ -70,6 +74,7 @@ public class Shader implements ELifeCycle {
 
         if (GL20.glGetShaderi(vertexShader, GL20.GL_COMPILE_STATUS) == 0) {
             System.err.println("Could not compile vertex shader: " + vertexShaderSource);
+            System.out.println(GL20.glGetShaderInfoLog(vertexShader));
         }
     }
 
@@ -80,6 +85,7 @@ public class Shader implements ELifeCycle {
 
         if (GL20.glGetShaderi(fragmentShader, GL20.GL_COMPILE_STATUS) == 0) {
             System.err.println("Could not compile fragment shader: " + fragmentShaderSource);
+            System.out.println(GL20.glGetShaderInfoLog(fragmentShader));
         }
     }
 

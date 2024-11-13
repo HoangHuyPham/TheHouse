@@ -6,23 +6,28 @@ import engine.camera.CameraMap;
 import engine.constant.Shaders;
 import engine.lifecycle.Mesh;
 import engine.lifecycle.Shader;
+import engine.lighting.DirectionalLight;
+import engine.lighting.Light;
+import engine.lighting.Lighting;
 import engine.object.*;
+import org.joml.Math;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
+import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
 public class Renderer {
 
-    public static void renderLight(Light light, AbstractCamera camera) {
-        Shader shader = Shaders.SIMPLE_SHADER;
+    public static void renderLight(EObject light, AbstractCamera camera) {
+        Shader shader = Shaders.LIGHT_SHADER;
         Mesh mesh = light.getMesh();
         bindMesh(mesh);
         shader.use();
-        shader.setUniform("displayColor", light.getDisPlayColor());
         shader.setUniform("model", light.getModelMatrix());
         shader.setUniform("view", camera.getViewMatrix());
-        if (!(camera instanceof CameraMap)) {
+
+        if (!light.isZLimit() && !(camera instanceof CameraMap)) {
             camera.setZFar(Float.POSITIVE_INFINITY);
             camera.setShouldProjectionUpdate(true);
             shader.setUniform("projection", camera.getProjectionMatrix());
@@ -30,6 +35,21 @@ public class Renderer {
             camera.setShouldProjectionUpdate(true);
         } else {
             shader.setUniform("projection", camera.getProjectionMatrix());
+        }
+
+
+        if (light.getMaterial() != null) {
+            if (light.getMaterial().getTexture() != null){
+                shader.setUniform("texture0", 0);
+                GL20.glActiveTexture(GL20.GL_TEXTURE0);
+                GL20.glBindTexture(GL20.GL_TEXTURE_2D, light.getMaterial().getTexture().getId());
+            }
+        }
+
+        if (light instanceof Light l){
+            shader.setUniform("intensity", l.getIntensity());
+        }else{
+            shader.setUniform("intensity", 1f);
         }
 
         if (mesh.getIndices() != null) {
@@ -69,39 +89,66 @@ public class Renderer {
         unbindMesh();
     }
 
-    public static void renderBasic(BasicObject object, AbstractCamera camera, Light light) {
+    public static void renderBasic(BasicObject object, AbstractCamera camera) {
         Shader shader = Shaders.CORE_SHADER;
         Mesh mesh = object.getMesh();
         bindMesh(mesh);
 
         shader.use();
 
-        if (light instanceof Sun sun) {
-            shader.setUniform("light.ambient", sun.getCurrentAmbient());
-        } else {
-            shader.setUniform("light.ambient", light.getAmbient());
+        if (Lighting.DIRECTIONAL_LIGHT != null){
+            shader.setUniform("dLight.position", (camera instanceof CameraMap) ? camera.getPosition() : Lighting.DIRECTIONAL_LIGHT.getPosition());
+            shader.setUniform("dLight.ambient", Lighting.DIRECTIONAL_LIGHT.getAmbient());
+            shader.setUniform("dLight.diffuse", Lighting.DIRECTIONAL_LIGHT.getDiffuse());
+            shader.setUniform("dLight.specular", Lighting.DIRECTIONAL_LIGHT.getSpecular());
+            shader.setUniform("dLight.color", Lighting.DIRECTIONAL_LIGHT.getColor());
+            shader.setUniform("dLight.intensity", Lighting.DIRECTIONAL_LIGHT.getIntensity());
         }
-        shader.setUniform("light.diffuse", light.getDiffuse());
-        shader.setUniform("light.specular", light.getSpecular());
+
+        for (int i = 0; i < Lighting.POINT_LIGHTS.size(); i++) {
+            shader.setUniform("pLights[%d].isActive".formatted(i), !(camera instanceof CameraMap) && Lighting.POINT_LIGHTS.get(i).isActive());
+            shader.setUniform("pLights[%d].position".formatted(i), Lighting.POINT_LIGHTS.get(i).getPosition());
+            shader.setUniform("pLights[%d].ambient".formatted(i), Lighting.POINT_LIGHTS.get(i).getAmbient());
+            shader.setUniform("pLights[%d].diffuse".formatted(i), Lighting.POINT_LIGHTS.get(i).getDiffuse());
+            shader.setUniform("pLights[%d].specular".formatted(i), Lighting.POINT_LIGHTS.get(i).getSpecular());
+            shader.setUniform("pLights[%d].color".formatted(i), Lighting.POINT_LIGHTS.get(i).getColor());
+            shader.setUniform("pLights[%d].intensity".formatted(i), Lighting.POINT_LIGHTS.get(i).getIntensity());
+            shader.setUniform("pLights[%d].constant".formatted(i), Lighting.POINT_LIGHTS.get(i).getConstant());
+            shader.setUniform("pLights[%d].linear".formatted(i), Lighting.POINT_LIGHTS.get(i).getLinear());
+            shader.setUniform("pLights[%d].quadratic".formatted(i), Lighting.POINT_LIGHTS.get(i).getQuadratic());
+        }
+
+        for (int i = 0; i < Lighting.SPOT_LIGHTS.size(); i++) {
+            shader.setUniform("sLights[%d].isActive".formatted(i), !(camera instanceof CameraMap) && Lighting.SPOT_LIGHTS.get(i).isActive());
+            shader.setUniform("sLights[%d].position".formatted(i), Lighting.SPOT_LIGHTS.get(i).getPosition());
+            shader.setUniform("sLights[%d].ambient".formatted(i), Lighting.SPOT_LIGHTS.get(i).getAmbient());
+            shader.setUniform("sLights[%d].diffuse".formatted(i), Lighting.SPOT_LIGHTS.get(i).getDiffuse());
+            shader.setUniform("sLights[%d].specular".formatted(i), Lighting.SPOT_LIGHTS.get(i).getSpecular());
+            shader.setUniform("sLights[%d].color".formatted(i), Lighting.SPOT_LIGHTS.get(i).getColor());
+            shader.setUniform("sLights[%d].cutOff".formatted(i), Math.cos(Math.toRadians(Lighting.SPOT_LIGHTS.get(i).getCutOff())));
+            shader.setUniform("sLights[%d].outerCutOff".formatted(i), Math.cos(Math.toRadians(Lighting.SPOT_LIGHTS.get(i).getOuterCutOff())));
+            shader.setUniform("sLights[%d].direction".formatted(i), Lighting.SPOT_LIGHTS.get(i).getForward());
+        }
 
         shader.setUniform("material.shininess", object.getMaterial().getShininess());
         shader.setUniform("material.ambient", object.getMaterial().getAmbient());
         shader.setUniform("material.diffuse", object.getMaterial().getDiffuse());
         shader.setUniform("material.specular", object.getMaterial().getSpecular());
 
-
-        shader.setUniform("light.color", light.getColor());
-        if (camera instanceof CameraMap){
-            shader.setUniform("light.position", new Vector3f(0, 2000f,0));
-        }else{
-            shader.setUniform("light.position", light.getPosition());
-        }
-
         shader.setUniform("camera.position", camera.getPosition());
 
         shader.setUniform("model", object.getModelMatrix());
         shader.setUniform("view", camera.getViewMatrix());
-        shader.setUniform("projection", camera.getProjectionMatrix());
+
+        if (!object.isZLimit()) {
+            camera.setZFar(Float.POSITIVE_INFINITY);
+            camera.setShouldProjectionUpdate(true);
+            shader.setUniform("projection", camera.getProjectionMatrix());
+            camera.setZFar(Camera.DEFAULT_Z_FAR);
+            camera.setShouldProjectionUpdate(true);
+        } else {
+            shader.setUniform("projection", camera.getProjectionMatrix());
+        }
 
         if (object.getMaterial().getTexture() != null) {
             shader.setUniform("texture0", 0);
