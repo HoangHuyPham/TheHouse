@@ -1,5 +1,6 @@
 package engine.lighting;
 
+import engine.camera.CameraShadow;
 import engine.object.EObject;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,4 +18,6 @@ public abstract class Light extends EObject {
     protected Vector3f diffuse = new Vector3f(1f), specular = new Vector3f(1f);
     @Builder.Default
     protected float intensity = 1f; // 0-1
+    @Builder.Default
+    protected CameraShadow cameraShadow = CameraShadow.builder().build();
 }

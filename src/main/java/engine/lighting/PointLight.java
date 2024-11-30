@@ -22,7 +22,7 @@ public class PointLight extends Light{
     private boolean isActive;
     @Builder.Default
     private Vector3f ambient = new Vector3f(1f);
-    @Builder.Default float constant = 1f, linear = 0.022f, quadratic = 0.0019f;
+    @Builder.Default float constant = 1f, linear = 0.7f, quadratic = 1.8f;
 
     @Override
     public void onTick() {}

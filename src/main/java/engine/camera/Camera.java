@@ -14,7 +14,7 @@ import org.joml.Vector3f;
 @Setter
 @SuperBuilder
 public class Camera extends AbstractCamera{
-    public static final float DEFAULT_Z_FAR = 200f;
+    public static final float DEFAULT_Z_FAR = Float.POSITIVE_INFINITY;
     @Builder.Default protected float fov = 45f;
     @Builder.Default protected float sensitivity = 0.05f, speed = 100f, aspect = 1.0f;
 

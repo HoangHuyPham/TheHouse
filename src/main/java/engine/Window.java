@@ -1,6 +1,7 @@
 package engine;
 
 import lombok.*;
+import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
@@ -40,6 +41,19 @@ public class Window {
         GL20.glEnable(GL20.GL_DEPTH_TEST);
         GL20.glClearDepth(1);
         glfwSetInputMode(windowId, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+        long primaryMonitor = glfwGetPrimaryMonitor();
+
+        GLFWVidMode vidMode = glfwGetVideoMode(primaryMonitor);
+
+        int[] windowWidth = new int[1];
+        int[] windowHeight = new int[1];
+        glfwGetWindowSize(windowId, windowWidth, windowHeight);
+
+        int posX = (vidMode.width() - windowWidth[0]) / 2;
+        int posY = (vidMode.height() - windowHeight[0]) / 2;
+
+        glfwSetWindowPos(windowId, posX, posY);
         updateViewPort();
     }
 

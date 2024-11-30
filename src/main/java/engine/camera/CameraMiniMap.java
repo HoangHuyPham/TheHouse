@@ -8,12 +8,10 @@ import lombok.experimental.SuperBuilder;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
-import java.util.Optional;
-
 @SuperBuilder
 @Getter
 @Setter
-public class CameraMap extends AbstractCamera {
+public class CameraMiniMap extends AbstractCamera {
     @Builder.Default
     private float viewSize = 400f;
     @Builder.Default

@@ -32,11 +32,17 @@ public class AssimpSupport {
                     texCoords[i] = new Vector2f(aTexCoords.get(i).x(), aTexCoords.get(i).y());
             }
 
-            for (int i=0; i<aFaces.limit(); i++){
-                indices.put(aFaces.get(i).mIndices().get(0));
-                indices.put(aFaces.get(i).mIndices().get(1));
-                indices.put(aFaces.get(i).mIndices().get(2));
+            try{
+                for (int i=0; i<aFaces.limit(); i++){
+                    indices.put(aFaces.get(i).mIndices().get(0));
+                    indices.put(aFaces.get(i).mIndices().get(1));
+                    indices.put(aFaces.get(i).mIndices().get(2));
+                }
+            }catch (Exception e){
+
             }
+
+
             indices.flip();
             return Obj.builder().positions(position).normals(normals).indices(indices).texCoords(texCoords).build();
         }catch (Exception e){
