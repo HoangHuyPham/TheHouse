@@ -13,7 +13,7 @@ import org.joml.Vector3f;
 @Setter
 public abstract class AbstractCamera extends EObject{
     @Builder.Default protected float zNear = 1.0f, zFar = 100.0f;
-    @Builder.Default protected float pitch = 0, yaw = 0, roll = 0;
+    @Builder.Default protected float pitch = 0, yaw = 90, roll = 0;
 
     @Builder.Default protected Vector3f up = new Vector3f(0, 1, 0);
 

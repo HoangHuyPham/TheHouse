@@ -6,7 +6,7 @@ import org.lwjgl.opengl.GL30;
 
 @Getter
 @Builder
-public class FrameBuffer implements ELifeCycle{
+public class MiniMapFrameBuffer implements ELifeCycle{
     private int id, colorTexture, depthStencilTexture, width, height;
 
     @Override

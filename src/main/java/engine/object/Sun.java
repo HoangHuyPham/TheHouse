@@ -14,7 +14,7 @@ import org.joml.Vector3f;
 public class Sun extends BasicObject  {
     @Builder.Default
     DirectionalLight sunLight = DirectionalLight.builder().build();
-    @Builder.Default private float angleXY = 90;
+    @Builder.Default private float angleXY = 125;
     long tickTime;
     @Override
     public void onTick() {
@@ -27,7 +27,7 @@ public class Sun extends BasicObject  {
         sunLight.setPosition(new Vector3f(sunX, sunY, 0).mul(sunZ));
         sunLight.setShouldUpdate(true);
 
-        if (tickTime % 2 ==0)
+        if (tickTime % 1 ==0)
             angleXY = angleXY + 1 % 360;
     }
 }
